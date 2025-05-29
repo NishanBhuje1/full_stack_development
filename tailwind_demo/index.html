@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tailwind Demo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-fancy: #e60076;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-200 p-4">
+    <div
+      class="bg-white border border-gray-500 rounded-md py-2 px-2 lg:px-10 2xl:px-20 flex flex-col-reverse gap-4"
+    >
+      <div class="flex flex-col gap-4 p-4 pt-0">
+        <h4 class="hidden">Entire house</h4>
+        <h2 class="text-3xl hidden">Beach House on Lake Huron</h2>
+        <div class="text-sm flex gap-2 order-1">
+          <span class="text-fancy font-medium"
+            ><i class="fa-solid fa-star"></i
+          ></span>
+          <span class="text-fancy">2.66</span>
+          <span class="text-gray-600">(128 reviews)</span>
+          <span class="text-fancy"> Bayfield, ON</span>
+        </div>
+        <p class="text-gray-600 text-sm order-3">
+          This sunny and spacious room is for those traveling light and looking
+          for a comfy and cozy place to lay their head for a night...
+          <a href="#" class="text-fancy font-bold">Show more</a>
+        </p>
+
+        <div class="order-2">
+          <a
+            href="#"
+            class="bg-fancy text-white w-full text-center px-3 py-2 block rounded-md"
+            >Check availability</a
+          >
+        </div>
+      </div>
+      <div class="sm:flex sm:max-h-48 sm:overflow-hidden gap-2">
+        <h4 class="text-sm text-white">Entire house</h4>
+        <div class="max-h-48 overflow-hidden rounded-md relative">
+          <img
+            class="w-full h-48 object-cover object-center"
+            src="https://tailwindcss.com/_next/static/media/responsive-1.fd2e9248.png"
+            alt=""
+          />
+          <div class="absolute left-6 bottom-6 sm:hidden">
+            <h2 class="text-xl text-white">Beach House on Lake Huron</h2>
+          </div>
+          <div
+            class="absolute top=0 left-0 bottom-0 right-0 bg-linear-to-b from-transparent via-transparent to-gray-950 sm:hidden"
+          >
+            &nbsp;
+          </div>
+        </div>
+        <img
+          class="hidden sm:block sm:rounded"
+          src="https://tailwindcss.com/_next/static/media/responsive-2.8cfea49d.png"
+          alt=""
+        />
+        <img
+          class="hidden"
+          src="https://tailwindcss.com/_next/static/media/responsive-3.e7467feb.png"
+          alt=""
+        />
+        <img
+          class="hidden"
+          src="https://tailwindcss.com/_next/static/media/responsive-4.8e943ba2.png"
+          alt=""
+        />
+        <img
+          class="hidden"
+          src="https://tailwindcss.com/_next/static/media/responsive-5.660185c2.png"
+          alt=""
+        />
+      </div>
+    </div>
+  </body>
+</html>

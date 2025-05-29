@@ -1,0 +1,144 @@
+@import url(../common/reset.css);
+@import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+:root {
+    --body-font-color: #ffffff;
+    --header-bg: rgb(190, 49, 68);
+    --hero-bg:#000;
+    --projects-bg:rgb(69, 86, 125);
+    --link-hover-bg:#be3144;
+    --social-bg:rgb(48, 56, 65);
+    --primary-font:"Raleway", sans-serif;
+    font-size:16px:
+
+
+}
+
+body {
+    font-family: var(--primary-font);
+    font-size: 1.8rem;
+    color: var(--body-font-color);
+    background-color: var(--hero-bg);
+}
+.section-inner {
+    max-width: 1280px;
+    width: 100%;
+}
+.main-header{
+    background-color: var(--header-bg);
+
+}
+
+.main-header nav{
+    padding: 0 2rem;
+}
+
+.main-header nav ul{
+    display: flex;
+    justify-content: end;
+}
+
+.main-header nav ul a{
+    padding: 20px;
+    display: inline-block;
+    color: var(--body-font-color);
+    font-size: 2.2rem;
+    text-decoration: none;
+    transition-property: all;
+    transition-duration: 500ms;
+    transition-timing-function: linear;
+    line-height: 3rem;
+}
+
+.main-header a:hover {
+    background-color: var(--projects-bg);
+}
+/* end page header */
+
+/* start hero banner */
+.hero-banner {
+    background-color: var(--hero-bg);
+    height: calc(100vh - 62px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-image: linear-gradient(62deg, #3a3d40 0%, #181719 100%);
+}
+.hero-banner h2 {
+    font-size: 6rem;
+    font-weight: bold;
+}
+
+.hero-banner h2:before,
+.hero-banner h2:after {
+    content: '';
+    color: antiquewhite;
+    border: 1px solid white;
+    width: 20px;
+    display: inline-block;
+    height: 20px;
+    border-radius: 20px;
+}
+
+.hero-banner h3 {
+    font-size: 3rem;
+    color: var(--header-bg);
+    font-style: italic;
+}
+
+.projects {
+    background-color: var(--projects-bg);
+    padding: 10rem 0;
+    display: flex;
+    justify-content: center;
+
+
+}
+
+.projects .section-inner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 60px;
+}
+.projects h2 {
+    font-size: 4.2rem;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.projects .project-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 4rem;
+}
+
+.project-item {
+    background-color: var(--social-bg);
+}
+.project-item img {
+    width: 100%;
+    height: 390px;
+    object-fit: cover;
+
+}
+
+.project-item > span {
+    display: block;
+    padding: 20px 5px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.project-item > span span {
+    visibility: hidden;
+    transition-property: visibility;
+    transition-duration: 500ms;
+    transition-timing-function: ease-in;
+}
+.project-item:hover > span span {
+    visibility: visible;
+    color: var(--link-hover-bg);
+}

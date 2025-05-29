@@ -1,0 +1,39 @@
+header {
+    font-family: "Indie Flower", sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+  }
+  
+  h1 {
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    color: #666;
+    font-size: 1.1em;
+  }
+  nav ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    overflow: hidden;
+  }
+  
+  nav li {
+    float: left;
+  }
+  
+  nav a {
+    display: block;
+    color: #333;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  nav a:hover {
+    background-color: #ddd;
+  }
