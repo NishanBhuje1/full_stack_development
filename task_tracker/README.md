@@ -1,0 +1,9 @@
+-- Add tailwind css to html file.
+-- Add fontawesome to html file.
+-- Ass google font to gtml gile.
+-- Create a html for the design.
+-- Style using tailwind css.
+-- get data from text field.
+-- Show the data to the html page.
+-- Implement check to each item.
+-- Implement delete to each item.
