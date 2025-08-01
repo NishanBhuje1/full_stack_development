@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="./app.js" defer></script>
+  </head>
+  <body class="flex justify-center items-center h-screen bg-grey-100">
+    <div
+      class="bg-white max-w-2xl w-full rounded-lg shadow-lg p-6 flex flex-col gap-4"
+    >
+      <div>
+        <input
+          class="w-full py-3 px-4 border border-grey-300 rounded-3xl"
+          type="text"
+          id="location"
+          name="location"
+          placeholder="Enter a location"
+          required
+        />
+      </div>
+      <div id="weather-data" class="flex flex-col gap-2"></div>
+    </div>
+  </body>
+</html>

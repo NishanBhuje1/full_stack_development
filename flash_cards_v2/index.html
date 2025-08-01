@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flash Cards</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="./app.js" defer></script>
+</head>
+<body class="flex h-screen justify-center items-center bg-white">
+    
+    <div class="w-[500px] flex flex-col gap-[5px]">
+        <h2 class="font-bold text-xl">Flash Cards</h2>
+        <div class="border rounded-[12px] p-1 border-gray-500 flex gap-1">
+            <div id="progress" class="bg-gray-500 rounded-[10px]">&nbsp;</div>
+            <span id="progress_percentage" class="text-sm grow-1">25%</span>
+            <span id="stats" class="text-sm">5 of 20</span>
+        </div>
+
+        <div class="border rounded-[12px] p-1 border-gray-500 flex flex-col gap-1">
+            <div class="bg-gray-300 rounded-[12px] h-[250px] flex flex-col justify-center p-4">
+                <h3 id="question" class="text-3xl text-center"></h3>
+                <p id="answer" class="text-xl text-center"></p>
+            </div>
+            <div class="bg-gray-300 rounded-[12px] p-2 flex justify-between">
+                <button id="previous" class="text-sm cursor-pointer">< Previous</button>
+                <button class="text-sm font-bold  cursor-pointer" id="show_hide_btn">Show Answer</button>
+                <button id="next" class="text-sm  cursor-pointer">Next ></button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
