@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pricing {
+  id         String   @id @default(uuid())
+  brand      String
+  model      String
+  issue      String
+  basePrice  Int
+  rangePrice Int
+  updatedAt  DateTime @updatedAt
+
+  @@unique([brand, model, issue])
+  @@index([brand, model])
+}
+
+model Lead {
+  id            String   @id @default(uuid())
+  type          String
+  fullName      String
+  email         String?
+  phone         String
+  brand         String?
+  model         String
+  issue         String
+  message       String?
+  preferredDate DateTime?
+  preferredTime String?
+  estimateLow   Int?
+  estimateHigh  Int?
+  createdAt     DateTime @default(now())
+
+  status        String   @default("NEW")
+  finalQuote    Int?
+  quoteNotes    String?
+  quotedAt      DateTime?
+
+
+  @@index([createdAt])
+  @@index([phone])
+}
