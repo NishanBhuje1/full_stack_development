@@ -96,4 +96,49 @@ export async function sendCustomerConfirmationEmail({ lead }) {
     subject,
     html,
   });
+  
+  export async function sendFinalQuoteEmail({ lead, finalQuote, quoteNotes }) {
+  if (!lead.email) return;
+
+  const subject = `Your FixMate Quote: $${finalQuote}`;
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+      <h2>Your Repair Quote</h2>
+      <p>Hi ${safe(lead.fullName)},</p>
+
+      <p>Here is your final quote based on your request:</p>
+
+      <div style="border:1px solid #eee; padding:14px; border-radius:10px;">
+        <p style="margin:0;"><strong>Device:</strong> ${safe((lead.brand ? lead.brand + " " : "") + (lead.model || "-"))}</p>
+        <p style="margin:0;"><strong>Issue:</strong> ${safe(lead.issue)}</p>
+        <p style="margin:0;"><strong>Final Quote:</strong> <strong>$${safe(finalQuote)}</strong></p>
+        ${
+          quoteNotes
+            ? `<p style="margin:10px 0 0;"><strong>Notes:</strong><br/>${safe(quoteNotes).replaceAll("\n","<br/>")}</p>`
+            : ""
+        }
+      </div>
+
+      <p style="margin-top:16px;">
+        Reply to this email to confirm, or call us to book your appointment.
+      </p>
+
+      <p style="color:#666; font-size: 12px; margin-top: 18px;">
+        FixMate Mobile
+      </p>
+    </div>
+  `;
+
+  await resend().emails.send({
+    from: process.env.EMAIL_FROM,
+    to: lead.email,
+    subject,
+    html,
+    // Optional but recommended so replies go to your inbox:
+    replyTo: process.env.EMAIL_TO,
+  });
+}
+
+
 }

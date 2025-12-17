@@ -36,6 +36,12 @@ model Lead {
   estimateHigh  Int?
   createdAt     DateTime @default(now())
 
+  status        String   @default("NEW")
+  finalQuote    Int?
+  quoteNotes    String?
+  quotedAt      DateTime?
+
+
   @@index([createdAt])
   @@index([phone])
 }

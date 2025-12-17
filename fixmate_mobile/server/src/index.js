@@ -8,6 +8,7 @@ import { authRouter } from "./routes/auth.routes.js";
 import { pricingRouter } from "./routes/pricing.routes.js";
 import { leadsRouter } from "./routes/leads.routes.js";
 import { adminRouter } from "./routes/admin.routes.js";
+import { quotesRouter } from "./routes/quotes.routes.js";
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(morgan("dev"));
 app.use(
   cors({
     origin: env.CORS_ORIGIN.length ? env.CORS_ORIGIN : true,
-    credentials: false
+    credentials: false,
   })
 );
 
@@ -28,6 +29,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/pricing", pricingRouter);
 app.use("/api/leads", leadsRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/admin/quotes", quotesRouter);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
