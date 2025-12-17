@@ -17,20 +17,29 @@ app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 
 // --- CORS Setup Start ---
-const allowedOrigins = [
-  env.CORS_ORIGIN, // Used from your env.js
-  "http://localhost:5173", // Local frontend development
-].filter(Boolean);
+const rawOrigins = [
+  env.CORS_ORIGIN, // From your env.js
+  "https://fixmatemobile.vercel.app", // Explicit production URL
+  "http://localhost:5173", // Local development
+]
+  .filter(Boolean)
+  .map((s) => s.trim().replace(/\/$/, "")); // Remove trailing slashes to prevent mismatches
+
+const allowlist = new Set(rawOrigins);
 
 app.use(
   cors({
     origin: (origin, cb) => {
-      // allow non-browser requests (Postman/curl) with no origin
+      // Allow requests with no origin (like mobile apps, curl, or Postman)
       if (!origin) return cb(null, true);
 
-      if (allowedOrigins.includes(origin)) return cb(null, true);
+      const clean = origin.trim().replace(/\/$/, "");
 
-      return cb(new Error("CORS blocked: " + origin));
+      if (allowlist.has(clean)) return cb(null, true);
+
+      // IMPORTANT: do NOT throw an error (which causes 500s).
+      // Returning (null, false) simply blocks the request via CORS policy.
+      return cb(null, false);
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
