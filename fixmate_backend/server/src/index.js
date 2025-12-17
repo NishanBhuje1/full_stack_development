@@ -16,12 +16,30 @@ app.use(helmet());
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 
+// --- CORS Setup Start ---
+const allowedOrigins = [
+  env.CORS_ORIGIN, // Used from your env.js
+  "http://localhost:5173", // Local frontend development
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: env.CORS_ORIGIN.length ? env.CORS_ORIGIN : true,
-    credentials: false,
+    origin: (origin, cb) => {
+      // allow non-browser requests (Postman/curl) with no origin
+      if (!origin) return cb(null, true);
+
+      if (allowedOrigins.includes(origin)) return cb(null, true);
+
+      return cb(new Error("CORS blocked: " + origin));
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// Ensure preflight works across all routes
+app.options("*", cors());
+// --- CORS Setup End ---
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
