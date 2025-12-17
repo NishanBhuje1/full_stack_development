@@ -14,7 +14,9 @@ function fmtEstimate(lead) {
 }
 
 function safe(v) {
-  return String(v ?? "").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  return String(v ?? "")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 export async function sendOwnerLeadEmail({ lead }) {
@@ -29,16 +31,23 @@ export async function sendOwnerLeadEmail({ lead }) {
       <p><strong>Email:</strong> ${safe(lead.email || "-")}</p>
       <p><strong>Phone:</strong> ${safe(lead.phone)}</p>
 
-      <p><strong>Device:</strong> ${safe((lead.brand ? lead.brand + " " : "") + (lead.model || "-"))}</p>
+      <p><strong>Device:</strong> ${safe(
+        (lead.brand ? lead.brand + " " : "") + (lead.model || "-")
+      )}</p>
       <p><strong>Issue:</strong> ${safe(lead.issue)}</p>
 
       <p><strong>Estimate:</strong> ${safe(fmtEstimate(lead))}</p>
       <p><strong>Preferred Date:</strong> ${
-        lead.preferredDate ? new Date(lead.preferredDate).toLocaleDateString() : "-"
+        lead.preferredDate
+          ? new Date(lead.preferredDate).toLocaleDateString()
+          : "-"
       }</p>
       <p><strong>Preferred Time:</strong> ${safe(lead.preferredTime || "-")}</p>
 
-      <p><strong>Message:</strong><br/>${safe(lead.message || "-").replaceAll("\n", "<br/>")}</p>
+      <p><strong>Message:</strong><br/>${safe(lead.message || "-").replaceAll(
+        "\n",
+        "<br/>"
+      )}</p>
 
       <hr/>
       <p style="color:#666;">Lead ID: ${safe(lead.id)}</p>
@@ -54,7 +63,7 @@ export async function sendOwnerLeadEmail({ lead }) {
 }
 
 export async function sendCustomerConfirmationEmail({ lead }) {
-  if (!lead.email) return; // only send if customer provided email
+  if (!lead.email) return;
 
   const siteUrl = process.env.PUBLIC_SITE_URL || "";
   const subject = `We received your request – FixMate Mobile`;
@@ -66,13 +75,19 @@ export async function sendCustomerConfirmationEmail({ lead }) {
 
       <div style="border:1px solid #eee; padding:14px; border-radius:10px;">
         <p style="margin:0 0 8px;"><strong>Your request</strong></p>
-        <p style="margin:0;"><strong>Device:</strong> ${safe((lead.brand ? lead.brand + " " : "") + lead.model)}</p>
+        <p style="margin:0;"><strong>Device:</strong> ${safe(
+          (lead.brand ? lead.brand + " " : "") + (lead.model || "-")
+        )}</p>
         <p style="margin:0;"><strong>Issue:</strong> ${safe(lead.issue)}</p>
-        <p style="margin:0;"><strong>Estimate:</strong> ${safe(fmtEstimate(lead))}</p>
+        <p style="margin:0;"><strong>Estimate:</strong> ${safe(
+          fmtEstimate(lead)
+        )}</p>
         ${
           lead.preferredDate || lead.preferredTime
             ? `<p style="margin:0;"><strong>Preferred time:</strong> ${
-                lead.preferredDate ? new Date(lead.preferredDate).toLocaleDateString() : "-"
+                lead.preferredDate
+                  ? new Date(lead.preferredDate).toLocaleDateString()
+                  : "-"
               } ${safe(lead.preferredTime || "")}</p>`
             : ""
         }
@@ -96,9 +111,10 @@ export async function sendCustomerConfirmationEmail({ lead }) {
     subject,
     html,
   });
-  
-  export async function sendFinalQuoteEmail({ lead, finalQuote, quoteNotes }) {
-  if (!lead.email) return;
+}
+
+export async function sendFinalQuoteEmail({ lead, finalQuote, quoteNotes }) {
+  if (!lead?.email) return;
 
   const subject = `Your FixMate Quote: $${finalQuote}`;
 
@@ -110,12 +126,18 @@ export async function sendCustomerConfirmationEmail({ lead }) {
       <p>Here is your final quote based on your request:</p>
 
       <div style="border:1px solid #eee; padding:14px; border-radius:10px;">
-        <p style="margin:0;"><strong>Device:</strong> ${safe((lead.brand ? lead.brand + " " : "") + (lead.model || "-"))}</p>
+        <p style="margin:0;"><strong>Device:</strong> ${safe(
+          (lead.brand ? lead.brand + " " : "") + (lead.model || "-")
+        )}</p>
         <p style="margin:0;"><strong>Issue:</strong> ${safe(lead.issue)}</p>
-        <p style="margin:0;"><strong>Final Quote:</strong> <strong>$${safe(finalQuote)}</strong></p>
+        <p style="margin:0;"><strong>Final Quote:</strong> <strong>$${safe(
+          finalQuote
+        )}</strong></p>
         ${
           quoteNotes
-            ? `<p style="margin:10px 0 0;"><strong>Notes:</strong><br/>${safe(quoteNotes).replaceAll("\n","<br/>")}</p>`
+            ? `<p style="margin:10px 0 0;"><strong>Notes:</strong><br/>${safe(
+                quoteNotes
+              ).replaceAll("\n", "<br/>")}</p>`
             : ""
         }
       </div>
@@ -135,10 +157,6 @@ export async function sendCustomerConfirmationEmail({ lead }) {
     to: lead.email,
     subject,
     html,
-    // Optional but recommended so replies go to your inbox:
-    replyTo: process.env.EMAIL_TO,
+    reply_to: process.env.EMAIL_TO, // replies go to your business inbox
   });
-}
-
-
 }
