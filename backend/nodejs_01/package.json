@@ -1,0 +1,16 @@
+{
+  "name": "nodejs_01",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "My very first Node.js application.",
+  "dependencies": {
+    "openai": "^5.20.1",
+    "readline-sync": "^1.4.10"
+  }
+}

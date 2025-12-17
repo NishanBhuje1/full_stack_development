@@ -1,0 +1,119 @@
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import AuthTitle from "../components/AuthTitle";
+import AuthBox from "../components/AuthBox";
+import { useState } from "react";
+import { Link } from "react-router";
+
+const schema = yup.object({
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
+  emailAddress: yup
+    .string()
+    .required("Email address is required")
+    .email("Invalid email format"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters")
+    .matches(
+      /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$/,
+      "Password is not strong."
+    ),
+});
+export function Register() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [titleText, setTitleText] = useState("Sign in to your account");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onBlur",
+    defaultValues: {
+      firstName: "Nishan",
+      lastName: "Bhujel",
+      emailAddress: "nishanbhujel0509@gmail.com",
+      password: "Nishan@1234",
+    },
+  });
+
+  const onSubmit = (data) => console.log(data);
+  // Handle form submission logic here
+
+  return (
+    <div className="flex flex-col items-center w-full">
+      <AuthTitle text={watch("firstName") + " " + titleText} />;
+      <AuthBox>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="font-semibold">First name</label>
+            <input
+              className="border p-1 border-grey-300 rounded-sm"
+              type="text"
+              id="firstName"
+              {...register("firstName", { required: true })}
+            ></input>
+            {errors.firstName && (
+              <p className="text-red-600 text-sm">{errors.firstName.message}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="font-semibold">Last name</label>
+            <input
+              className="border p-1 border-grey-300 rounded-sm"
+              type="text"
+              id="lastName"
+              {...register("lastName", { required: true })}
+            ></input>
+            {errors.lastName && (
+              <p className="text-red-600 text-sm">{errors.lastName.message}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="font-semibold">Email address</label>
+            <input
+              className="border p-1 border-grey-300 rounded-sm"
+              type="text"
+              id="emailAddress"
+              {...register("emailAddress", { required: true })}
+            ></input>
+            {errors.emailAddress && (
+              <p className="text-red-600 text-sm">{errors.email.message}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-1">
+            <label
+              onClick={() => setShowPassword(!showPassword)}
+              className="font-semibold"
+            >
+              Password
+            </label>
+            <input
+              className="border p-1 border-grey-300 rounded-sm"
+              type={showPassword ? "text" : "password"}
+              id="password"
+              {...register("password", { required: true })}
+            ></input>
+            {errors.password && (
+              <p className="text-red-600 text-sm">{errors.password.message}</p>
+            )}
+          </div>
+          <button className="bg-amber-500 px-3 py-2 inLine-block text-white rounded-lg">
+            Sign up
+          </button>
+        </form>
+      </AuthBox>
+      <p>
+        Already have an account?{" "}
+        <Link to="/sign-in" className="font-bold text-amber-500">
+          Sign in
+        </Link>
+      </p>
+    </div>
+  );
+}
