@@ -1,127 +1,42 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useMemo, useState, useEffect } from "react";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 
-const LS_PRICING = "fixmate_pricing_overrides_v1";
-const LS_LEADS = "fixmate_leads_v1";
-
-function readJSON(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-function writeJSON(key, value) {
-  localStorage.setItem(key, JSON.stringify(value));
-}
+const API = import.meta.env.VITE_API_URL;
 
 const CATALOG = {
   Apple: {
-    "iPhone 17": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
-    "iPhone 17 Pro": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
-    "iPhone 17 Pro Max": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
+    "iPhone 13": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
+    "iPhone 14": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
+    "iPhone 15": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
   },
   Samsung: {
-    "Galaxy S25+": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
-    "Galaxy S25 Ultra": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
-    "Galaxy 25 Edge": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
+    "Galaxy S22": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
+    "Galaxy S23": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
+    "Galaxy A54": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
   },
   Google: {
-    "Pixel 10": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
-    "Pixel 10 Pro": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
-    "Pixel 10 Pro XL": [
-      "Screen Replacement",
-      "Battery Replacement",
-      "Charging Port Repair",
-      "Camera Repair",
-      "Water Damage Check",
-      "Speaker / Microphone",
-    ],
+    "Pixel 7": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
+    "Pixel 8": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
   },
 };
 
-// Simple estimate table (adjust to your real pricing)
+// default pricing (fallback when DB has no override)
 const PRICING = {
   "Screen Replacement": { base: 220, range: 60 },
   "Battery Replacement": { base: 120, range: 40 },
   "Charging Port Repair": { base: 140, range: 50 },
-  "Camera Repair": { base: 180, range: 60 },
-  "Water Damage Check": { base: 90, range: 40 },
-  "Speaker / Microphone": { base: 160, range: 50 },
+  "Charging Port": { base: 140, range: 50 }, // optional compatibility
 };
 
-function estimateCost({ brand, model, issue }) {
+function estimateFromDefault({ brand, model, issue }) {
   if (!brand || !model || !issue) return null;
 
-  const overrides = readJSON(LS_PRICING, {});
-  const overrideKey = `${brand}__${model}__${issue}`;
-  const override = overrides[overrideKey];
+  const price = PRICING[issue] || { base: 150, range: 50 };
 
-  const price = override || PRICING[issue] || { base: 150, range: 50 };
-
-  const brandMultiplier =
-    brand === "Apple" ? 1.15 : brand === "Google" ? 1.05 : 1.0;
+  // small modifiers (example)
+  const brandMultiplier = brand === "Apple" ? 1.15 : brand === "Google" ? 1.05 : 1.0;
   const modelBump =
-    model.includes("15") || model.includes("S23") || model.includes("Pixel 8")
-      ? 1.1
-      : 1.0;
+    model.includes("15") || model.includes("S23") || model.includes("Pixel 8") ? 1.1 : 1.0;
 
   const base = Math.round(price.base * brandMultiplier * modelBump);
   const low = Math.max(50, base - price.range);
@@ -130,9 +45,23 @@ function estimateCost({ brand, model, issue }) {
   return { low, high, base };
 }
 
+async function fetchPricingOverride(brand, model, issue) {
+  const url =
+    `${API}/api/pricing?brand=${encodeURIComponent(brand)}` +
+    `&model=${encodeURIComponent(model)}` +
+    `&issue=${encodeURIComponent(issue)}`;
+
+  const res = await fetch(url);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.error || "Failed to fetch pricing");
+
+  // backend returns { rules: [...] }
+  return data.rules?.[0] || null;
+}
+
 export default function Quote() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const issueFromUrl = searchParams.get("issue") || "";
 
   const [step, setStep] = useState(1);
 
@@ -141,42 +70,57 @@ export default function Quote() {
   const [model, setModel] = useState("");
   const [issue, setIssue] = useState("");
 
+  // Step 2
+  const [loadingPrice, setLoadingPrice] = useState(false);
+  const [priceError, setPriceError] = useState("");
+  const [overrideRule, setOverrideRule] = useState(null);
+
   // Step 3
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [preferredDate, setPreferredDate] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
 
-  // Prefill Issue from ServicesList redirect
+  // If user came from ServicesList: /quote?issue=Screen%20Replacement
   useEffect(() => {
-    if (issueFromUrl) {
-      setIssue(issueFromUrl);
-    }
-  }, [issueFromUrl]);
+    const preIssue = searchParams.get("issue");
+    if (preIssue) setIssue(preIssue);
+  }, [searchParams]);
 
-  const models = useMemo(
-    () => (brand ? Object.keys(CATALOG[brand] || {}) : []),
-    [brand]
-  );
+  const models = useMemo(() => (brand ? Object.keys(CATALOG[brand] || {}) : []), [brand]);
+  const issues = useMemo(() => (brand && model ? CATALOG[brand]?.[model] || [] : []), [brand, model]);
 
-  // Ensure issueFromUrl appears in dropdown even if not in the model list yet
-  const issues = useMemo(() => {
-    const list = brand && model ? CATALOG[brand]?.[model] || [] : [];
-    if (issueFromUrl && !list.includes(issueFromUrl))
-      return [issueFromUrl, ...list];
-    return list;
-  }, [brand, model, issueFromUrl]);
-
-  const estimate = useMemo(
-    () => estimateCost({ brand, model, issue }),
+  const defaultEstimate = useMemo(
+    () => estimateFromDefault({ brand, model, issue }),
     [brand, model, issue]
   );
 
+  // Final estimate uses override if available else default
+  const finalEstimate = useMemo(() => {
+    if (!brand || !model || !issue) return null;
+
+    if (overrideRule) {
+      const base = overrideRule.basePrice;
+      const range = overrideRule.rangePrice;
+
+      // keep your brand/model modifiers (optional)
+      const brandMultiplier = brand === "Apple" ? 1.15 : brand === "Google" ? 1.05 : 1.0;
+      const modelBump =
+        model.includes("15") || model.includes("S23") || model.includes("Pixel 8") ? 1.1 : 1.0;
+
+      const computedBase = Math.round(base * brandMultiplier * modelBump);
+      const low = Math.max(50, computedBase - range);
+      const high = computedBase + range;
+
+      return { low, high, base: computedBase };
+    }
+
+    return defaultEstimate;
+  }, [brand, model, issue, overrideRule, defaultEstimate]);
+
   const canGoStep2 = Boolean(brand && model && issue);
-  const canGoStep3 = Boolean(estimate);
-  const canSubmit = Boolean(
-    fullName && phone && preferredDate && preferredTime
-  );
+  const canGoStep3 = Boolean(finalEstimate && !loadingPrice);
+  const canSubmit = Boolean(fullName && phone && preferredDate && preferredTime);
 
   function next() {
     setStep((s) => Math.min(3, s + 1));
@@ -189,56 +133,80 @@ export default function Quote() {
   function resetModelAndIssue(nextBrand) {
     setBrand(nextBrand);
     setModel("");
-    // keep issue if it came from URL so user doesn't lose the selected service
-    setIssue(issueFromUrl || "");
+    // keep issue if it exists in future; but safe reset:
+    setIssue("");
+    setOverrideRule(null);
+    setPriceError("");
   }
 
   function resetIssue(nextModel) {
     setModel(nextModel);
-    // keep issue if it came from URL and is still valid, otherwise reset
-    const validList = CATALOG[brand]?.[nextModel] || [];
-    if (issueFromUrl && validList.includes(issueFromUrl)) {
-      setIssue(issueFromUrl);
-    } else if (issueFromUrl && !validList.includes(issueFromUrl)) {
-      // still keep it (user can proceed, estimate will be based on pricing table)
-      setIssue(issueFromUrl);
-    } else {
-      setIssue("");
-    }
+    setIssue("");
+    setOverrideRule(null);
+    setPriceError("");
   }
 
-  function handleBook(e) {
-    const existing = readJSON(LS_LEADS, []);
-    existing.push({
-      type: "Quote Booking",
-      createdAt: new Date().toISOString(),
-      fullName,
-      email: "", // you don't collect email in Quote page currently
-      phone,
-      brand,
-      model,
-      issue,
-      estimate,
-      preferredDate,
-      preferredTime,
-      message: "",
-    });
-    writeJSON(LS_LEADS, existing);
+  // When we enter Step 2, fetch override from DB (if exists)
+  useEffect(() => {
+    let cancelled = false;
 
+    async function load() {
+      if (step !== 2) return;
+      if (!brand || !model || !issue) return;
+
+      setLoadingPrice(true);
+      setPriceError("");
+      setOverrideRule(null);
+
+      try {
+        const rule = await fetchPricingOverride(brand, model, issue);
+        if (!cancelled) setOverrideRule(rule);
+      } catch (err) {
+        if (!cancelled) setPriceError(err.message || "Pricing fetch failed");
+      } finally {
+        if (!cancelled) setLoadingPrice(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [step, brand, model, issue]);
+
+  async function handleBook(e) {
     e.preventDefault();
 
-    console.log("Booking details:", {
-      brand,
-      model,
-      issue,
-      estimate,
-      fullName,
-      phone,
-      preferredDate,
-      preferredTime,
-    });
+    try {
+      const payload = {
+        type: "Quote Booking",
+        fullName,
+        email: "", // add later if needed
+        phone,
+        brand,
+        model,
+        issue,
+        preferredDate,
+        preferredTime,
+        estimateLow: finalEstimate?.low,
+        estimateHigh: finalEstimate?.high,
+        message: "",
+      };
 
-    alert("Appointment request submitted! We will contact you shortly.");
+      const res = await fetch(`${API}/api/leads`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || "Failed to submit booking");
+
+      alert("Appointment request submitted! We will contact you shortly.");
+      navigate("/");
+    } catch (err) {
+      alert(err.message || "Booking failed. Please try again.");
+    }
   }
 
   return (
@@ -250,21 +218,9 @@ export default function Quote() {
             <h1 className="text-3xl md:text-4xl font-serif text-[#334578]">
               Get a Repair Quote
             </h1>
-            <p className="text-[#334578]/80 mt-1">
-              3 steps: Select → Estimate → Book
-            </p>
-            {issueFromUrl ? (
-              <p className="text-sm text-[#334578]/70 mt-1">
-                Selected service:{" "}
-                <span className="font-semibold">{issueFromUrl}</span>
-              </p>
-            ) : null}
+            <p className="text-[#334578]/80 mt-1">3 steps: Select → Estimate → Book</p>
           </div>
-
-          <Link
-            to="/"
-            className="text-blue-700 hover:text-blue-800 font-semibold"
-          >
+          <Link to="/" className="text-blue-700 hover:text-blue-800 font-semibold">
             Back to Home
           </Link>
         </div>
@@ -317,9 +273,7 @@ export default function Quote() {
                     disabled={!brand}
                     className="w-full rounded-xl border border-gray-200 px-4 py-3 disabled:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   >
-                    <option value="">
-                      {brand ? "Select model" : "Select brand first"}
-                    </option>
+                    <option value="">{brand ? "Select model" : "Select brand first"}</option>
                     {models.map((m) => (
                       <option key={m} value={m}>
                         {m}
@@ -330,52 +284,32 @@ export default function Quote() {
 
                 <div>
                   <label className="block text-sm font-semibold text-[#334578] mb-2">
-                    Issue / Service
+                    Issue
                   </label>
                   <select
                     value={issue}
                     onChange={(e) => setIssue(e.target.value)}
-                    className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    disabled={!brand || !model}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 disabled:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   >
-                    <option value="">
-                      {brand && model
-                        ? "Select issue"
-                        : "You can pick issue now or after selecting model"}
-                    </option>
-
-                    {/* If no brand/model yet, still allow selecting the service prefilled from URL */}
-                    {(!brand || !model) && issueFromUrl ? (
-                      <option value={issueFromUrl}>{issueFromUrl}</option>
-                    ) : null}
-
+                    <option value="">{model ? "Select issue" : "Select model first"}</option>
                     {issues.map((i) => (
                       <option key={i} value={i}>
                         {i}
                       </option>
                     ))}
                   </select>
-
-                  {brand &&
-                  model &&
-                  issue &&
-                  !(CATALOG[brand]?.[model] || []).includes(issue) ? (
-                    <p className="text-xs text-[#334578]/70 mt-2">
-                      Note: This service may not be listed for the selected
-                      model. You can still request a booking.
-                    </p>
-                  ) : null}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between mt-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
+                {/* Custom quote link instead of tip */}
                 <div className="text-sm text-[#334578]/80">
-                  Can’t find your device or issue?{" "}
-                  <Link
-                    to="/custom-quote"
-                    className="text-blue-700 font-semibold hover:underline"
-                  >
+                  Can’t find your device?{" "}
+                  <Link to="/custom-quote" className="text-blue-700 hover:text-blue-800 font-semibold">
                     Request a custom quote
                   </Link>
+                  .
                 </div>
 
                 <button
@@ -396,31 +330,44 @@ export default function Quote() {
               </h2>
 
               <div className="rounded-2xl border border-gray-200 p-5">
-                <div className="text-[#334578]/80 text-sm mb-2">
-                  Your selection
-                </div>
+                <div className="text-[#334578]/80 text-sm mb-2">Your selection</div>
                 <div className="text-lg font-semibold text-[#334578]">
                   {brand} • {model} • {issue}
                 </div>
 
                 <div className="mt-4">
-                  {estimate ? (
+                  {loadingPrice ? (
+                    <div className="text-[#334578]/80">Loading pricing...</div>
+                  ) : finalEstimate ? (
                     <>
-                      <div className="text-[#334578]/80 text-sm">
-                        Estimated range
-                      </div>
+                      <div className="text-[#334578]/80 text-sm">Estimated range</div>
                       <div className="text-3xl font-bold text-[#334578] mt-1">
-                        ${estimate.low} – ${estimate.high}
+                        ${finalEstimate.low} – ${finalEstimate.high}
                       </div>
+
                       <div className="text-sm text-[#334578]/70 mt-2">
-                        Rough estimate. Final price depends on inspection and
-                        parts availability.
+                        This is a rough estimate. Final price depends on inspection and parts availability.
                       </div>
+
+                      {overrideRule ? (
+                        <div className="mt-3 text-sm text-green-700 font-semibold">
+                          Using Admin pricing override from database.
+                        </div>
+                      ) : (
+                        <div className="mt-3 text-sm text-[#334578]/70">
+                          Using standard pricing (no override set).
+                        </div>
+                      )}
+
+                      {priceError ? (
+                        <div className="mt-3 text-sm text-red-600 font-semibold">
+                          Pricing fetch issue: {priceError}. Using fallback.
+                        </div>
+                      ) : null}
                     </>
                   ) : (
                     <div className="text-red-600 font-semibold">
-                      Missing details. Go back and select brand, model, and
-                      issue.
+                      Missing details. Go back and select all fields.
                     </div>
                   )}
                 </div>
@@ -454,9 +401,9 @@ export default function Quote() {
                 <div className="text-sm text-[#334578]/80">Summary</div>
                 <div className="mt-1 font-semibold text-[#334578]">
                   {brand} • {model} • {issue}{" "}
-                  {estimate ? (
+                  {finalEstimate ? (
                     <span className="font-normal text-[#334578]/80">
-                      (Est: ${estimate.low}–${estimate.high})
+                      (Est: ${finalEstimate.low}–${finalEstimate.high})
                     </span>
                   ) : null}
                 </div>
@@ -538,8 +485,7 @@ export default function Quote() {
         </div>
 
         <p className="text-sm text-[#334578]/70 mt-5">
-          Next step: connect this form to your backend (email, database, or
-          booking system).
+          Next step: connect bookings to calendar and send confirmation SMS/email.
         </p>
       </div>
     </div>
