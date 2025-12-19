@@ -224,6 +224,7 @@ export default function Quote() {
   const [phone, setPhone] = useState("");
   const [preferredDate, setPreferredDate] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
+  const [email, setEmail] = useState("");
 
   // If user came from ServicesList: /quote?issue=Battery%20Replacement
   useEffect(() => {
@@ -231,8 +232,14 @@ export default function Quote() {
     if (preIssue) setIssue(preIssue);
   }, [searchParams]);
 
-  const models = useMemo(() => (brand ? Object.keys(PRICE_TABLE[brand] || {}) : []), [brand]);
-  const issues = useMemo(() => (brand && model ? getIssuesFor(brand, model) : []), [brand, model]);
+  const models = useMemo(
+    () => (brand ? Object.keys(PRICE_TABLE[brand] || {}) : []),
+    [brand]
+  );
+  const issues = useMemo(
+    () => (brand && model ? getIssuesFor(brand, model) : []),
+    [brand, model]
+  );
 
   // Fixed base price from your table
   const fixedBasePrice = useMemo(() => {
@@ -254,8 +261,9 @@ export default function Quote() {
 
   const canGoStep2 = Boolean(brand && model && issue);
   const canGoStep3 = Boolean(finalPrice != null && !loadingPrice);
-  const canSubmit = Boolean(fullName && phone && preferredDate && preferredTime);
-
+  const canSubmit = Boolean(
+    fullName && phone && email && preferredDate && preferredTime
+  );
   function next() {
     setStep((s) => Math.min(3, s + 1));
   }
@@ -296,7 +304,10 @@ export default function Quote() {
         if (!cancelled) setOverrideRule(rule);
       } catch (err) {
         // If override fails, we still show fixed price from table
-        if (!cancelled) setPriceError(err.message || "Pricing fetch failed (using fixed list).");
+        if (!cancelled)
+          setPriceError(
+            err.message || "Pricing fetch failed (using fixed list)."
+          );
       } finally {
         if (!cancelled) setLoadingPrice(false);
       }
@@ -315,14 +326,14 @@ export default function Quote() {
       const payload = {
         type: "Quote Booking",
         fullName,
-        email: "", // add later if needed
+        email,
         phone,
         brand,
         model,
         issue,
         preferredDate,
         preferredTime,
-        estimateLow: finalPrice,  // fixed quote -> low = high = same
+        estimateLow: finalPrice, // fixed quote -> low = high = same
         estimateHigh: finalPrice,
         message: "",
       };
@@ -352,9 +363,14 @@ export default function Quote() {
             <h1 className="text-3xl md:text-4xl font-serif text-[#334578]">
               Get a Repair Quote
             </h1>
-            <p className="text-[#334578]/80 mt-1">3 steps: Select → Price → Book</p>
+            <p className="text-[#334578]/80 mt-1">
+              3 steps: Select → Price → Book
+            </p>
           </div>
-          <Link to="/" className="text-blue-700 hover:text-blue-800 font-semibold">
+          <Link
+            to="/"
+            className="text-blue-700 hover:text-blue-800 font-semibold"
+          >
             Back to Home
           </Link>
         </div>
@@ -424,7 +440,9 @@ export default function Quote() {
                     disabled={!model}
                     className="w-full rounded-xl border border-gray-200 px-4 py-3 disabled:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   >
-                    <option value="">{model ? "Select repair type" : "Select model first"}</option>
+                    <option value="">
+                      {model ? "Select repair type" : "Select model first"}
+                    </option>
                     {issues.map((i) => (
                       <option key={i} value={i}>
                         {i}
@@ -464,7 +482,9 @@ export default function Quote() {
               </h2>
 
               <div className="rounded-2xl border border-gray-200 p-5">
-                <div className="text-[#334578]/80 text-sm mb-2">Your selection</div>
+                <div className="text-[#334578]/80 text-sm mb-2">
+                  Your selection
+                </div>
                 <div className="text-lg font-semibold text-[#334578]">
                   {brand} • {model} • {issue}
                 </div>
@@ -474,13 +494,16 @@ export default function Quote() {
                     <div className="text-[#334578]/80">Loading pricing...</div>
                   ) : finalPrice != null ? (
                     <>
-                      <div className="text-[#334578]/80 text-sm">Fixed price</div>
+                      <div className="text-[#334578]/80 text-sm">
+                        Fixed price
+                      </div>
                       <div className="text-3xl font-bold text-[#334578] mt-1">
                         ${finalPrice}
                       </div>
 
                       <div className="text-sm text-[#334578]/70 mt-2">
-                        Final price may change only if inspection finds additional damage or parts are unavailable.
+                        Final price may change only if inspection finds
+                        additional damage or parts are unavailable.
                       </div>
 
                       {overrideRule ? (
@@ -501,7 +524,8 @@ export default function Quote() {
                     </>
                   ) : (
                     <div className="text-red-600 font-semibold">
-                      No price found for this selection. Please go back or use custom quote.
+                      No price found for this selection. Please go back or use
+                      custom quote.
                     </div>
                   )}
                 </div>
@@ -579,6 +603,18 @@ export default function Quote() {
                     className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    placeholder="you@example.com"
+                  />
+                </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-[#334578] mb-2">
@@ -619,7 +655,8 @@ export default function Quote() {
         </div>
 
         <p className="text-sm text-[#334578]/70 mt-5">
-          Next step: connect bookings to calendar and send confirmation SMS/email.
+          Next step: connect bookings to calendar and send confirmation
+          SMS/email.
         </p>
       </div>
     </div>
