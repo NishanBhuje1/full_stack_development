@@ -3,48 +3,180 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 
 const API = import.meta.env.VITE_API_URL;
 
-const CATALOG = {
+/**
+ * FIXED PRICE TABLE (AUD)
+ * Issue label mapping:
+ * - LCD Price -> "Screen Replacement"
+ * - Back Glass -> "Back Glass Replacement"
+ * - Battery -> "Battery Replacement"
+ * - Charging Port -> "Charging Port Repair"
+ */
+const PRICE_TABLE = {
   Apple: {
-    "iPhone 13": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
-    "iPhone 14": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
-    "iPhone 15": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
-  },
-  Samsung: {
-    "Galaxy S22": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
-    "Galaxy S23": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
-    "Galaxy A54": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
-  },
-  Google: {
-    "Pixel 7": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
-    "Pixel 8": ["Screen Replacement", "Battery Replacement", "Charging Port Repair"],
+    "iPhone 7/8/SE/SE 2": {
+      "Screen Replacement": 89,
+      "Back Glass Replacement": 89,
+      "Battery Replacement": 79,
+      "Charging Port Repair": 89,
+    },
+    "iPhone X": {
+      "Screen Replacement": 99,
+      "Back Glass Replacement": 99,
+      "Battery Replacement": 89,
+      "Charging Port Repair": 99,
+    },
+    "iPhone Xs": {
+      "Screen Replacement": 99,
+      "Back Glass Replacement": 99,
+      "Battery Replacement": 89,
+      "Charging Port Repair": 99,
+    },
+    "iPhone Xs Max": {
+      "Screen Replacement": 99,
+      "Back Glass Replacement": 99,
+      "Battery Replacement": 99,
+      "Charging Port Repair": 99,
+    },
+    "iPhone 11": {
+      "Screen Replacement": 109,
+      "Back Glass Replacement": 119,
+      "Battery Replacement": 109,
+      "Charging Port Repair": 99,
+    },
+    "iPhone 11 Pro": {
+      "Screen Replacement": 119,
+      "Back Glass Replacement": 119,
+      "Battery Replacement": 119,
+      "Charging Port Repair": 129,
+    },
+    "iPhone 11 Pro Max": {
+      "Screen Replacement": 129,
+      "Back Glass Replacement": 129,
+      "Battery Replacement": 129,
+      "Charging Port Repair": 129,
+    },
+    "iPhone 12 / 12 Pro": {
+      "Screen Replacement": 139,
+      "Back Glass Replacement": 139,
+      "Battery Replacement": 149,
+      "Charging Port Repair": 129,
+    },
+    "iPhone 12 Pro Max": {
+      "Screen Replacement": 159,
+      "Back Glass Replacement": 139,
+      "Battery Replacement": 159,
+      "Charging Port Repair": 149,
+    },
+    "iPhone 13": {
+      "Screen Replacement": 149,
+      "Back Glass Replacement": 149,
+      "Battery Replacement": 149,
+      "Charging Port Repair": 129,
+    },
+    "iPhone 13 Pro": {
+      "Screen Replacement": 189,
+      "Back Glass Replacement": 169,
+      "Battery Replacement": 159,
+      "Charging Port Repair": 129,
+    },
+    "iPhone 13 Mini": {
+      "Screen Replacement": 149,
+      "Back Glass Replacement": 149,
+      "Battery Replacement": 149,
+      "Charging Port Repair": 129,
+    },
+    "iPhone 13 Pro Max": {
+      "Screen Replacement": 199,
+      "Back Glass Replacement": 179,
+      "Battery Replacement": 159,
+      "Charging Port Repair": 149,
+    },
+    "iPhone 14": {
+      "Screen Replacement": 159,
+      "Back Glass Replacement": 149,
+      "Battery Replacement": 159,
+      "Charging Port Repair": 159,
+    },
+    "iPhone 14 Plus": {
+      "Screen Replacement": 169,
+      "Back Glass Replacement": 159,
+      "Battery Replacement": 159,
+      "Charging Port Repair": 159,
+    },
+    "iPhone 14 Pro": {
+      "Screen Replacement": 189,
+      "Back Glass Replacement": 169,
+      "Battery Replacement": 169,
+      "Charging Port Repair": 169,
+    },
+    "iPhone 14 Pro Max": {
+      "Screen Replacement": 229,
+      "Back Glass Replacement": 179,
+      "Battery Replacement": 169,
+      "Charging Port Repair": 169,
+    },
+    "iPhone 15": {
+      "Screen Replacement": 169,
+      "Back Glass Replacement": 169,
+      "Battery Replacement": 179,
+      "Charging Port Repair": 169,
+    },
+    "iPhone 15 Plus": {
+      "Screen Replacement": 189,
+      "Back Glass Replacement": 169,
+      "Battery Replacement": 179,
+      "Charging Port Repair": 169,
+    },
+    "iPhone 15 Pro": {
+      "Screen Replacement": 199,
+      "Back Glass Replacement": 179,
+      "Battery Replacement": 189,
+      "Charging Port Repair": 179,
+    },
+    "iPhone 15 Pro Max": {
+      "Screen Replacement": 229,
+      "Back Glass Replacement": 189,
+      "Battery Replacement": 189,
+      "Charging Port Repair": 199,
+    },
+    "iPhone 16": {
+      "Screen Replacement": 199,
+      "Back Glass Replacement": 179,
+      "Battery Replacement": 189,
+      "Charging Port Repair": 189,
+    },
+    "iPhone 16 Plus": {
+      "Screen Replacement": 219,
+      "Back Glass Replacement": 189,
+      "Battery Replacement": 189,
+      "Charging Port Repair": 189,
+    },
+    "iPhone 16 Pro": {
+      "Screen Replacement": 299,
+      "Back Glass Replacement": 199,
+      "Battery Replacement": 199,
+      "Charging Port Repair": 199,
+    },
+    "iPhone 16 Pro Max": {
+      "Screen Replacement": 319,
+      "Back Glass Replacement": 199,
+      "Battery Replacement": 199,
+      "Charging Port Repair": 199,
+    },
+    "iPhone 16E": {
+      "Screen Replacement": 189,
+      "Back Glass Replacement": 159,
+      "Battery Replacement": 169,
+      // Charging Port price not provided in your list -> omitted intentionally
+    },
   },
 };
 
-// default pricing (fallback when DB has no override)
-const PRICING = {
-  "Screen Replacement": { base: 220, range: 60 },
-  "Battery Replacement": { base: 120, range: 40 },
-  "Charging Port Repair": { base: 140, range: 50 },
-  "Charging Port": { base: 140, range: 50 }, // optional compatibility
+const CATALOG = {
+  Apple: Object.keys(PRICE_TABLE.Apple),
 };
 
-function estimateFromDefault({ brand, model, issue }) {
-  if (!brand || !model || !issue) return null;
-
-  const price = PRICING[issue] || { base: 150, range: 50 };
-
-  // small modifiers (example)
-  const brandMultiplier = brand === "Apple" ? 1.15 : brand === "Google" ? 1.05 : 1.0;
-  const modelBump =
-    model.includes("15") || model.includes("S23") || model.includes("Pixel 8") ? 1.1 : 1.0;
-
-  const base = Math.round(price.base * brandMultiplier * modelBump);
-  const low = Math.max(50, base - price.range);
-  const high = base + price.range;
-
-  return { low, high, base };
-}
-
+// Optional: keep DB override (admin pricing). If you don’t want DB overrides, you can delete this.
 async function fetchPricingOverride(brand, model, issue) {
   const url =
     `${API}/api/pricing?brand=${encodeURIComponent(brand)}` +
@@ -55,8 +187,20 @@ async function fetchPricingOverride(brand, model, issue) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data?.error || "Failed to fetch pricing");
 
-  // backend returns { rules: [...] }
   return data.rules?.[0] || null;
+}
+
+function getIssuesFor(brand, model) {
+  const issuesObj = PRICE_TABLE?.[brand]?.[model] || {};
+  // return only issues that have a numeric price
+  return Object.entries(issuesObj)
+    .filter(([, price]) => typeof price === "number" && Number.isFinite(price))
+    .map(([issue]) => issue);
+}
+
+function getFixedPrice(brand, model, issue) {
+  const price = PRICE_TABLE?.[brand]?.[model]?.[issue];
+  return typeof price === "number" ? price : null;
 }
 
 export default function Quote() {
@@ -66,7 +210,7 @@ export default function Quote() {
   const [step, setStep] = useState(1);
 
   // Step 1
-  const [brand, setBrand] = useState("");
+  const [brand, setBrand] = useState("Apple");
   const [model, setModel] = useState("");
   const [issue, setIssue] = useState("");
 
@@ -81,45 +225,35 @@ export default function Quote() {
   const [preferredDate, setPreferredDate] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
 
-  // If user came from ServicesList: /quote?issue=Screen%20Replacement
+  // If user came from ServicesList: /quote?issue=Battery%20Replacement
   useEffect(() => {
     const preIssue = searchParams.get("issue");
     if (preIssue) setIssue(preIssue);
   }, [searchParams]);
 
-  const models = useMemo(() => (brand ? Object.keys(CATALOG[brand] || {}) : []), [brand]);
-  const issues = useMemo(() => (brand && model ? CATALOG[brand]?.[model] || [] : []), [brand, model]);
+  const models = useMemo(() => (brand ? Object.keys(PRICE_TABLE[brand] || {}) : []), [brand]);
+  const issues = useMemo(() => (brand && model ? getIssuesFor(brand, model) : []), [brand, model]);
 
-  const defaultEstimate = useMemo(
-    () => estimateFromDefault({ brand, model, issue }),
-    [brand, model, issue]
-  );
+  // Fixed base price from your table
+  const fixedBasePrice = useMemo(() => {
+    if (!brand || !model || !issue) return null;
+    return getFixedPrice(brand, model, issue);
+  }, [brand, model, issue]);
 
-  // Final estimate uses override if available else default
-  const finalEstimate = useMemo(() => {
+  // Final price uses override if admin set it; otherwise uses fixed table price
+  const finalPrice = useMemo(() => {
     if (!brand || !model || !issue) return null;
 
-    if (overrideRule) {
-      const base = overrideRule.basePrice;
-      const range = overrideRule.rangePrice;
-
-      // keep your brand/model modifiers (optional)
-      const brandMultiplier = brand === "Apple" ? 1.15 : brand === "Google" ? 1.05 : 1.0;
-      const modelBump =
-        model.includes("15") || model.includes("S23") || model.includes("Pixel 8") ? 1.1 : 1.0;
-
-      const computedBase = Math.round(base * brandMultiplier * modelBump);
-      const low = Math.max(50, computedBase - range);
-      const high = computedBase + range;
-
-      return { low, high, base: computedBase };
+    // If override exists, use override basePrice (treat as fixed)
+    if (overrideRule && typeof overrideRule.basePrice === "number") {
+      return overrideRule.basePrice;
     }
 
-    return defaultEstimate;
-  }, [brand, model, issue, overrideRule, defaultEstimate]);
+    return fixedBasePrice;
+  }, [brand, model, issue, overrideRule, fixedBasePrice]);
 
   const canGoStep2 = Boolean(brand && model && issue);
-  const canGoStep3 = Boolean(finalEstimate && !loadingPrice);
+  const canGoStep3 = Boolean(finalPrice != null && !loadingPrice);
   const canSubmit = Boolean(fullName && phone && preferredDate && preferredTime);
 
   function next() {
@@ -133,7 +267,6 @@ export default function Quote() {
   function resetModelAndIssue(nextBrand) {
     setBrand(nextBrand);
     setModel("");
-    // keep issue if it exists in future; but safe reset:
     setIssue("");
     setOverrideRule(null);
     setPriceError("");
@@ -162,7 +295,8 @@ export default function Quote() {
         const rule = await fetchPricingOverride(brand, model, issue);
         if (!cancelled) setOverrideRule(rule);
       } catch (err) {
-        if (!cancelled) setPriceError(err.message || "Pricing fetch failed");
+        // If override fails, we still show fixed price from table
+        if (!cancelled) setPriceError(err.message || "Pricing fetch failed (using fixed list).");
       } finally {
         if (!cancelled) setLoadingPrice(false);
       }
@@ -188,8 +322,8 @@ export default function Quote() {
         issue,
         preferredDate,
         preferredTime,
-        estimateLow: finalEstimate?.low,
-        estimateHigh: finalEstimate?.high,
+        estimateLow: finalPrice,  // fixed quote -> low = high = same
+        estimateHigh: finalPrice,
         message: "",
       };
 
@@ -218,7 +352,7 @@ export default function Quote() {
             <h1 className="text-3xl md:text-4xl font-serif text-[#334578]">
               Get a Repair Quote
             </h1>
-            <p className="text-[#334578]/80 mt-1">3 steps: Select → Estimate → Book</p>
+            <p className="text-[#334578]/80 mt-1">3 steps: Select → Price → Book</p>
           </div>
           <Link to="/" className="text-blue-700 hover:text-blue-800 font-semibold">
             Back to Home
@@ -230,7 +364,7 @@ export default function Quote() {
           <div className="flex items-center gap-3">
             <StepPill active={step === 1} done={step > 1} label="1. Select" />
             <div className="h-px flex-1 bg-gray-200" />
-            <StepPill active={step === 2} done={step > 2} label="2. Estimate" />
+            <StepPill active={step === 2} done={step > 2} label="2. Price" />
             <div className="h-px flex-1 bg-gray-200" />
             <StepPill active={step === 3} done={false} label="3. Book" />
           </div>
@@ -254,7 +388,6 @@ export default function Quote() {
                     onChange={(e) => resetModelAndIssue(e.target.value)}
                     className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   >
-                    <option value="">Select brand</option>
                     {Object.keys(CATALOG).map((b) => (
                       <option key={b} value={b}>
                         {b}
@@ -270,10 +403,9 @@ export default function Quote() {
                   <select
                     value={model}
                     onChange={(e) => resetIssue(e.target.value)}
-                    disabled={!brand}
-                    className="w-full rounded-xl border border-gray-200 px-4 py-3 disabled:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   >
-                    <option value="">{brand ? "Select model" : "Select brand first"}</option>
+                    <option value="">Select model</option>
                     {models.map((m) => (
                       <option key={m} value={m}>
                         {m}
@@ -284,15 +416,15 @@ export default function Quote() {
 
                 <div>
                   <label className="block text-sm font-semibold text-[#334578] mb-2">
-                    Issue
+                    Repair Type
                   </label>
                   <select
                     value={issue}
                     onChange={(e) => setIssue(e.target.value)}
-                    disabled={!brand || !model}
+                    disabled={!model}
                     className="w-full rounded-xl border border-gray-200 px-4 py-3 disabled:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   >
-                    <option value="">{model ? "Select issue" : "Select model first"}</option>
+                    <option value="">{model ? "Select repair type" : "Select model first"}</option>
                     {issues.map((i) => (
                       <option key={i} value={i}>
                         {i}
@@ -303,10 +435,12 @@ export default function Quote() {
               </div>
 
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
-                {/* Custom quote link instead of tip */}
                 <div className="text-sm text-[#334578]/80">
                   Can’t find your device?{" "}
-                  <Link to="/custom-quote" className="text-blue-700 hover:text-blue-800 font-semibold">
+                  <Link
+                    to="/custom-quote"
+                    className="text-blue-700 hover:text-blue-800 font-semibold"
+                  >
                     Request a custom quote
                   </Link>
                   .
@@ -326,7 +460,7 @@ export default function Quote() {
           {step === 2 && (
             <div>
               <h2 className="text-2xl font-semibold text-[#334578] mb-4">
-                Step 2: Estimated cost
+                Step 2: Fixed price
               </h2>
 
               <div className="rounded-2xl border border-gray-200 p-5">
@@ -338,15 +472,15 @@ export default function Quote() {
                 <div className="mt-4">
                   {loadingPrice ? (
                     <div className="text-[#334578]/80">Loading pricing...</div>
-                  ) : finalEstimate ? (
+                  ) : finalPrice != null ? (
                     <>
-                      <div className="text-[#334578]/80 text-sm">Estimated range</div>
+                      <div className="text-[#334578]/80 text-sm">Fixed price</div>
                       <div className="text-3xl font-bold text-[#334578] mt-1">
-                        ${finalEstimate.low} – ${finalEstimate.high}
+                        ${finalPrice}
                       </div>
 
                       <div className="text-sm text-[#334578]/70 mt-2">
-                        This is a rough estimate. Final price depends on inspection and parts availability.
+                        Final price may change only if inspection finds additional damage or parts are unavailable.
                       </div>
 
                       {overrideRule ? (
@@ -355,19 +489,19 @@ export default function Quote() {
                         </div>
                       ) : (
                         <div className="mt-3 text-sm text-[#334578]/70">
-                          Using standard pricing (no override set).
+                          Using your fixed price list.
                         </div>
                       )}
 
                       {priceError ? (
                         <div className="mt-3 text-sm text-red-600 font-semibold">
-                          Pricing fetch issue: {priceError}. Using fallback.
+                          Pricing fetch issue: {priceError}
                         </div>
                       ) : null}
                     </>
                   ) : (
                     <div className="text-red-600 font-semibold">
-                      Missing details. Go back and select all fields.
+                      No price found for this selection. Please go back or use custom quote.
                     </div>
                   )}
                 </div>
@@ -401,9 +535,9 @@ export default function Quote() {
                 <div className="text-sm text-[#334578]/80">Summary</div>
                 <div className="mt-1 font-semibold text-[#334578]">
                   {brand} • {model} • {issue}{" "}
-                  {finalEstimate ? (
+                  {finalPrice != null ? (
                     <span className="font-normal text-[#334578]/80">
-                      (Est: ${finalEstimate.low}–${finalEstimate.high})
+                      (Price: ${finalPrice})
                     </span>
                   ) : null}
                 </div>
