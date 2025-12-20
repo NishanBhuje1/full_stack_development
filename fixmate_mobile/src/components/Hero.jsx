@@ -20,7 +20,7 @@ export default function Hero() {
               onClick={() => navigate("/quote")}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-colors"
             >
-              Get Help NOW!
+              Get Quote NOW!
             </button>
           </div>
 

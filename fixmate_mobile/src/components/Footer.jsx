@@ -66,21 +66,37 @@ export default function Footer() {
               FixMate Mobile
             </h4>
             <div className="space-y-2 text-gray-700">
-              <p>(03) 8820 8183</p>
+              {/* Phone Call Link */}
+              <p>
+                <a href="tel:+61388208183" className="hover:text-[#334578]">
+                  (03) 8820 8183
+                </a>
+              </p>
+
+              {/* Email Link */}
               <p>
                 <a
-                  href="mailto:info@mysite.com"
+                  href="mailto:fixmatemobile@outlook.com"
                   className="hover:text-[#334578]"
                 >
                   fixmatemobile@outlook.com
                 </a>
               </p>
+
+              {/* Maps Link */}
               <p>
-                Eastland Shopping Centre,
-                <br />
-                175 Maroondah Hwy, Ringwood,
-                <br />
-                VIC 3134
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Eastland+Shopping+Centre+175+Maroondah+Hwy+Ringwood+VIC+3134"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#334578]"
+                >
+                  Eastland Shopping Centre,
+                  <br />
+                  175 Maroondah Hwy, Ringwood,
+                  <br />
+                  VIC 3134
+                </a>
               </p>
             </div>
           </div>

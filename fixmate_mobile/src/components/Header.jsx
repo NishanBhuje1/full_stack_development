@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import logo from "../assets/logo.jpg";
 
 function NavItem({ to, label, onClick }) {
   return (
@@ -37,11 +38,8 @@ export default function Header() {
             className="flex items-center"
             aria-label="Go to home"
           >
-            <img
-              src="https://ext.same-assets.com/657843969/2994605673.jpeg"
-              alt="FixMate Mobile"
-              className="h-14 w-auto"
-            />
+            {/* 2. Use the imported variable name in the src attribute */}
+            <img src={logo} alt="FixMate Mobile" className="h-14 w-auto" />
           </button>
 
           {/* Desktop nav */}
