@@ -18,9 +18,11 @@ app.use(morgan("dev"));
 
 // --- CORS Setup Start ---
 const rawOrigins = [
-  env.CORS_ORIGIN,                    // Used from your env.js
-  "https://fixmatemobile.vercel.app", // Explicit production URL
-  "http://localhost:5173",            // Local development
+  env.CORS_ORIGIN, // Used from your env.js
+  "https://fixmatemobile.vercel.app",
+  "https://fixmatemobile.com",
+  "https://www.fixmatemobile.com",
+  "http://localhost:5173",
 ];
 
 const allowlist = new Set(
@@ -28,6 +30,11 @@ const allowlist = new Set(
     .filter((v) => typeof v === "string" && v.trim().length > 0) // Ensure valid strings
     .map((s) => s.trim().replace(/\/$/, "")) // Remove trailing slashes
 );
+
+if (!allowlist.has(clean)) {
+  console.error("CORS blocked:", clean);
+  return cb(null, false);
+}
 
 app.use(
   cors({
