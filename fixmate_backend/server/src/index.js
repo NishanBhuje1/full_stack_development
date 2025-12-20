@@ -31,11 +31,6 @@ const allowlist = new Set(
     .map((s) => s.trim().replace(/\/$/, "")) // Remove trailing slashes
 );
 
-if (!allowlist.has(clean)) {
-  console.error("CORS blocked:", clean);
-  return cb(null, false);
-}
-
 app.use(
   cors({
     origin: (origin, cb) => {
@@ -44,7 +39,10 @@ app.use(
 
       const clean = origin.trim().replace(/\/$/, "");
 
-      if (allowlist.has(clean)) return cb(null, true);
+      if (!allowlist.has(clean)) {
+        console.error("CORS blocked:", clean);
+        return cb(null, false);
+      }
 
       // IMPORTANT: do NOT throw an error (which causes 500s).
       // Returning (null, false) simply blocks the request via CORS policy.
