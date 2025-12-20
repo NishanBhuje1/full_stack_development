@@ -10,14 +10,21 @@ import { leadsRouter } from "./routes/leads.routes.js";
 import { adminRouter } from "./routes/admin.routes.js";
 import { quotesRouter } from "./routes/quotes.routes.js";
 
+// IMPORTANT: only if you have this file
+// import { catalogRouter } from "./routes/catalog.routes.js";
+
 const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  })
+);
+
 app.use(express.json({ limit: "1mb" }));
 app.use(morgan("dev"));
 
 // --- CORS Setup Start ---
-
 const rawOrigins = [
   env.CORS_ORIGIN,
   "https://fixmatemobile.vercel.app",
@@ -35,9 +42,7 @@ const allowlist = new Set(
 const corsOptions = {
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);
-
     const clean = String(origin).trim().replace(/\/$/, "");
-
     if (allowlist.has(clean)) return cb(null, true);
 
     console.error("CORS blocked:", clean, "allowlist:", [...allowlist]);
@@ -48,7 +53,6 @@ const corsOptions = {
   credentials: true,
 };
 
-// IMPORTANT: use same options for both
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 // --- CORS Setup End ---
@@ -56,10 +60,11 @@ app.options("*", cors(corsOptions));
 app.get("/health", (_req, res) => res.json({ ok: true }));
 
 app.use("/api/auth", authRouter);
+// app.use("/api/catalog", catalogRouter); // only if you actually have it
 app.use("/api/pricing", pricingRouter);
 app.use("/api/leads", leadsRouter);
+app.use("/api/quotes", quotesRouter);
 app.use("/api/admin", adminRouter);
-app.use("/api/admin/quotes", quotesRouter);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

@@ -3,16 +3,25 @@ import { prisma } from "../prisma.js";
 
 export const pricingRouter = express.Router();
 
-// Public: get pricing rules for a model (and optional issue)
+/**
+ * GET /api/pricing?brand=...&model=...&issue=...
+ * Returns { price } in cents
+ */
 pricingRouter.get("/", async (req, res) => {
-  const brand = String(req.query.brand || "");
-  const model = String(req.query.model || "");
-  const issue = String(req.query.issue || "");
+  const brand = String(req.query.brand || "").trim();
+  const model = String(req.query.model || "").trim();
+  const issue = String(req.query.issue || "").trim();
 
-  if (!brand || !model) return res.status(400).json({ error: "brand and model are required" });
+  if (!brand || !model || !issue) {
+    return res.status(400).json({ error: "brand, model, issue are required" });
+  }
 
-  const where = { brand, model, ...(issue ? { issue } : {}) };
-  const rules = await prisma.pricing.findMany({ where, orderBy: { updatedAt: "desc" } });
+  const rule = await prisma.pricing.findFirst({
+    where: { brand, model, issue },
+    select: { price: true },
+  });
 
-  res.json({ rules });
+  if (!rule) return res.status(404).json({ error: "Price not found" });
+
+  res.json({ price: rule.price }); // cents
 });
