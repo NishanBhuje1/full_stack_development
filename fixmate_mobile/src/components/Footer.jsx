@@ -79,7 +79,7 @@ export default function Footer() {
                   href="mailto:fixmatemobile@outlook.com"
                   className="hover:text-[#334578]"
                 >
-                  fixmatemobile@outlook.com
+                  support@fixmatemobile.com
                 </a>
               </p>
 
