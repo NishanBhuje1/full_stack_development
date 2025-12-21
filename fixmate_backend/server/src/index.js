@@ -9,9 +9,10 @@ import { pricingRouter } from "./routes/pricing.routes.js";
 import { leadsRouter } from "./routes/leads.routes.js";
 import { adminRouter } from "./routes/admin.routes.js";
 import { quotesRouter } from "./routes/quotes.routes.js";
+import { catalogRouter } from "./routes/catalog.routes.js";
 
-// IMPORTANT: only if you have this file
-// import { catalogRouter } from "./routes/catalog.routes.js";
+
+
 
 const app = express();
 
@@ -65,6 +66,8 @@ app.use("/api/pricing", pricingRouter);
 app.use("/api/leads", leadsRouter);
 app.use("/api/quotes", quotesRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/catalog", catalogRouter);
+
 
 app.use((err, _req, res, _next) => {
   console.error(err);
