@@ -7,7 +7,6 @@ import Commitment from "./components/Commitment";
 import Footer from "./components/Footer";
 import AdminDashboard from "./pages/AdminDashboard";
 
-
 import Quote from "./pages/Quote";
 import CustomQuote from "./pages/CustomQuote";
 import Welcome from "./pages/Welcome";
@@ -35,9 +34,9 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin" element={<AdminDashboard />} />
 
-
           <Route path="/quote" element={<Quote />} />
           <Route path="/custom-quote" element={<CustomQuote />} />
+          <Route path="*" element={<HomePage />} />
         </Routes>
       </main>
 
