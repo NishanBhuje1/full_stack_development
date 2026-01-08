@@ -89,7 +89,10 @@ export default function Quote() {
   }, []);
 
   // computed lists
-  const models = useMemo(() => (brand ? modelsByBrand[brand] || [] : []), [brand, modelsByBrand]);
+  const models = useMemo(
+    () => (brand ? modelsByBrand[brand] || [] : []),
+    [brand, modelsByBrand]
+  );
   const issues = useMemo(() => {
     if (!brand || !model) return [];
     return issuesByBrandModel[`${brand}||${model}`] || [];
@@ -137,7 +140,9 @@ export default function Quote() {
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data?.error || "Price not found");
 
-        if (!cancelled) setPriceCents(Number(data.price));
+        const rule = data.rules?.[0];
+        if (!rule) throw new Error("No price found");
+        if (!cancelled) setPriceCents(Number(rule.price));
       } catch (e) {
         if (!cancelled) setPriceError(e.message || "Failed to fetch price");
       } finally {
@@ -153,7 +158,14 @@ export default function Quote() {
 
   const canGoStep2 = Boolean(brand && model && issue);
   const canGoStep3 = Boolean(priceCents != null && !loadingPrice);
-  const canSubmit = Boolean(fullName && phone && email && preferredDate && preferredTime && priceCents != null);
+  const canSubmit = Boolean(
+    fullName &&
+      phone &&
+      email &&
+      preferredDate &&
+      preferredTime &&
+      priceCents != null
+  );
 
   async function handleBook(e) {
     e.preventDefault();
@@ -167,17 +179,23 @@ export default function Quote() {
         brand,
         model,
         issue,
-        preferredDate: preferredDate ? new Date(preferredDate).toISOString() : null,
+        preferredDate: preferredDate
+          ? new Date(preferredDate).toISOString()
+          : null,
         preferredTime,
         estimatedPrice: priceCents, // cents
         message: "",
       };
 
-      const res = await fetchWithTimeout(`${API}/api/leads`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }, 10000);
+      const res = await fetchWithTimeout(
+        `${API}/api/leads`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        },
+        10000
+      );
 
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || "Failed to submit booking");
@@ -194,10 +212,19 @@ export default function Quote() {
       <div className="max-w-3xl mx-auto px-4 py-10">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-serif text-[#334578]">Get a Repair Quote</h1>
-            <p className="text-[#334578]/80 mt-1">3 steps: Select → Price → Book</p>
+            <h1 className="text-3xl md:text-4xl font-serif text-[#334578]">
+              Get a Repair Quote
+            </h1>
+            <p className="text-[#334578]/80 mt-1">
+              3 steps: Select → Price → Book
+            </p>
           </div>
-          <Link to="/" className="text-blue-700 hover:text-blue-800 font-semibold">Back to Home</Link>
+          <Link
+            to="/"
+            className="text-blue-700 hover:text-blue-800 font-semibold"
+          >
+            Back to Home
+          </Link>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm p-4 mb-6">
@@ -214,56 +241,89 @@ export default function Quote() {
           {catalogLoading ? (
             <div className="text-[#334578]/80">Loading phone list...</div>
           ) : catalogError ? (
-            <div className="text-red-600 font-semibold">Catalog error: {catalogError}</div>
+            <div className="text-red-600 font-semibold">
+              Catalog error: {catalogError}
+            </div>
           ) : null}
 
           {step === 1 && !catalogLoading && !catalogError && (
             <div>
-              <h2 className="text-2xl font-semibold text-[#334578] mb-4">Step 1: Select your device</h2>
+              <h2 className="text-2xl font-semibold text-[#334578] mb-4">
+                Step 1: Select your device
+              </h2>
 
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-[#334578] mb-2">Brand</label>
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Brand
+                  </label>
                   <select
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
                     className="w-full rounded-xl border border-gray-200 px-4 py-3"
                   >
                     <option value="">Select brand</option>
-                    {brands.map((b) => <option key={b} value={b}>{b}</option>)}
+                    {brands.map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-[#334578] mb-2">Model</label>
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Model
+                  </label>
                   <select
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
                     disabled={!brand}
                     className="w-full rounded-xl border border-gray-200 px-4 py-3 disabled:bg-gray-50"
                   >
-                    <option value="">{brand ? "Select model" : "Select brand first"}</option>
-                    {models.map((m) => <option key={m} value={m}>{m}</option>)}
+                    <option value="">
+                      {brand ? "Select model" : "Select brand first"}
+                    </option>
+                    {models.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-[#334578] mb-2">Repair Type</label>
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Repair Type
+                  </label>
                   <select
                     value={issue}
                     onChange={(e) => setIssue(e.target.value)}
                     disabled={!brand || !model}
                     className="w-full rounded-xl border border-gray-200 px-4 py-3 disabled:bg-gray-50"
                   >
-                    <option value="">{model ? "Select repair type" : "Select model first"}</option>
-                    {issues.map((i) => <option key={i} value={i}>{i}</option>)}
+                    <option value="">
+                      {model ? "Select repair type" : "Select model first"}
+                    </option>
+                    {issues.map((i) => (
+                      <option key={i} value={i}>
+                        {i}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
 
               <div className="flex items-center justify-between mt-6">
                 <div className="text-sm text-[#334578]/80">
-                  Can’t find your device? <Link to="/custom-quote" className="text-blue-700 hover:text-blue-800 font-semibold">Request a custom quote</Link>.
+                  Can’t find your device?{" "}
+                  <Link
+                    to="/custom-quote"
+                    className="text-blue-700 hover:text-blue-800 font-semibold"
+                  >
+                    Request a custom quote
+                  </Link>
+                  .
                 </div>
 
                 <button
@@ -279,30 +339,45 @@ export default function Quote() {
 
           {step === 2 && (
             <div>
-              <h2 className="text-2xl font-semibold text-[#334578] mb-4">Step 2: Fixed price</h2>
+              <h2 className="text-2xl font-semibold text-[#334578] mb-4">
+                Step 2: Fixed price
+              </h2>
 
               <div className="rounded-2xl border border-gray-200 p-5">
-                <div className="text-[#334578]/80 text-sm mb-2">Your selection</div>
-                <div className="text-lg font-semibold text-[#334578]">{brand} • {model} • {issue}</div>
+                <div className="text-[#334578]/80 text-sm mb-2">
+                  Your selection
+                </div>
+                <div className="text-lg font-semibold text-[#334578]">
+                  {brand} • {model} • {issue}
+                </div>
 
                 <div className="mt-4">
                   {loadingPrice ? (
                     <div className="text-[#334578]/80">Loading price...</div>
                   ) : priceCents != null ? (
                     <>
-                      <div className="text-[#334578]/80 text-sm">Fixed price</div>
-                      <div className="text-3xl font-bold text-[#334578] mt-1">${centsToAud(priceCents)}</div>
+                      <div className="text-[#334578]/80 text-sm">
+                        Fixed price
+                      </div>
+                      <div className="text-3xl font-bold text-[#334578] mt-1">
+                        ${centsToAud(priceCents)}
+                      </div>
                     </>
                   ) : (
                     <div className="text-red-600 font-semibold">
-                      {priceError ? `Price error: ${priceError}` : "No price found for this selection."}
+                      {priceError
+                        ? `Price error: ${priceError}`
+                        : "No price found for this selection."}
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="flex items-center justify-between mt-6">
-                <button onClick={back} className="px-6 py-3 rounded-full border border-gray-200 font-semibold text-[#334578] hover:bg-gray-50">
+                <button
+                  onClick={back}
+                  className="px-6 py-3 rounded-full border border-gray-200 font-semibold text-[#334578] hover:bg-gray-50"
+                >
                   Back
                 </button>
                 <button
@@ -318,42 +393,78 @@ export default function Quote() {
 
           {step === 3 && (
             <div>
-              <h2 className="text-2xl font-semibold text-[#334578] mb-4">Step 3: Book appointment</h2>
+              <h2 className="text-2xl font-semibold text-[#334578] mb-4">
+                Step 3: Book appointment
+              </h2>
 
               <div className="rounded-2xl border border-gray-200 p-5 mb-5">
                 <div className="text-sm text-[#334578]/80">Summary</div>
                 <div className="mt-1 font-semibold text-[#334578]">
                   {brand} • {model} • {issue}{" "}
                   {priceCents != null ? (
-                    <span className="font-normal text-[#334578]/80">(Price: ${centsToAud(priceCents)})</span>
+                    <span className="font-normal text-[#334578]/80">
+                      (Price: ${centsToAud(priceCents)})
+                    </span>
                   ) : null}
                 </div>
               </div>
 
               <form onSubmit={handleBook} className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-[#334578] mb-2">Full name</label>
-                  <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3" />
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Full name
+                  </label>
+                  <input
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-[#334578] mb-2">Phone number</label>
-                  <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3" />
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Phone number
+                  </label>
+                  <input
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-[#334578] mb-2">Email</label>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3" />
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-[#334578] mb-2">Preferred date</label>
-                  <input type="date" value={preferredDate} onChange={(e) => setPreferredDate(e.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3" />
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Preferred date
+                  </label>
+                  <input
+                    type="date"
+                    value={preferredDate}
+                    onChange={(e) => setPreferredDate(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3"
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-[#334578] mb-2">Preferred time</label>
-                  <select value={preferredTime} onChange={(e) => setPreferredTime(e.target.value)} className="w-full rounded-xl border border-gray-200 px-4 py-3">
+                  <label className="block text-sm font-semibold text-[#334578] mb-2">
+                    Preferred time
+                  </label>
+                  <select
+                    value={preferredTime}
+                    onChange={(e) => setPreferredTime(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3"
+                  >
                     <option value="">Select time</option>
                     <option value="Morning">Morning (9am–12pm)</option>
                     <option value="Afternoon">Afternoon (12pm–4pm)</option>
@@ -362,10 +473,18 @@ export default function Quote() {
                 </div>
 
                 <div className="md:col-span-2 flex items-center justify-between mt-2">
-                  <button type="button" onClick={back} className="px-6 py-3 rounded-full border border-gray-200 font-semibold text-[#334578] hover:bg-gray-50">
+                  <button
+                    type="button"
+                    onClick={back}
+                    className="px-6 py-3 rounded-full border border-gray-200 font-semibold text-[#334578] hover:bg-gray-50"
+                  >
                     Back
                   </button>
-                  <button type="submit" disabled={!canSubmit} className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold px-6 py-3 rounded-full">
+                  <button
+                    type="submit"
+                    disabled={!canSubmit}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold px-6 py-3 rounded-full"
+                  >
                     Confirm booking
                   </button>
                 </div>
@@ -380,6 +499,10 @@ export default function Quote() {
 
 function StepPill({ active, done, label }) {
   const base = "px-4 py-2 rounded-full text-sm font-semibold transition-colors";
-  const cls = done ? `${base} bg-green-50 text-green-700` : active ? `${base} bg-blue-600 text-white` : `${base} bg-gray-100 text-gray-600`;
+  const cls = done
+    ? `${base} bg-green-50 text-green-700`
+    : active
+    ? `${base} bg-blue-600 text-white`
+    : `${base} bg-gray-100 text-gray-600`;
   return <div className={cls}>{label}</div>;
 }
