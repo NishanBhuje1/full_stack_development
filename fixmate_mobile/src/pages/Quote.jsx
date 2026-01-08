@@ -143,9 +143,7 @@ export default function Quote() {
 
         // ✅ FIXED: pricing endpoint returns { rules: [...] } not { price: ... }
         // So we must read the first rule and extract rule.price (cents)
-        const rule = data.rules?.[0];
-        if (!rule) throw new Error("No price found");
-        if (!cancelled) setPriceCents(Number(rule.price));
+        setPriceCents(Number(data.price));
       } catch (e) {
         if (!cancelled) setPriceError(e.message || "Failed to fetch price");
       } finally {
