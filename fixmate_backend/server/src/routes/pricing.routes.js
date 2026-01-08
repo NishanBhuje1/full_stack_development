@@ -8,20 +8,20 @@ export const pricingRouter = express.Router();
  * Returns { price } in cents
  */
 pricingRouter.get("/", async (req, res) => {
-  const brand = String(req.query.brand || "").trim();
-  const model = String(req.query.model || "").trim();
-  const issue = String(req.query.issue || "").trim();
+  const brand = String(req.query.brand || "");
+  const model = String(req.query.model || "");
+  const issue = String(req.query.issue || "");
 
   if (!brand || !model || !issue) {
     return res.status(400).json({ error: "brand, model, issue are required" });
   }
 
-  const rule = await prisma.pricing.findFirst({
-    where: { brand, model, issue },
-    select: { price: true },
+  const rule = await prisma.pricing.findUnique({
+    where: { brand_model_issue: { brand, model, issue } },
   });
 
-  if (!rule) return res.status(404).json({ error: "Price not found" });
+  if (!rule) return res.status(404).json({ error: "No price found" });
 
   res.json({ price: rule.price }); // cents
 });
+

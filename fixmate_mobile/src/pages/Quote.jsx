@@ -93,6 +93,7 @@ export default function Quote() {
     () => (brand ? modelsByBrand[brand] || [] : []),
     [brand, modelsByBrand]
   );
+
   const issues = useMemo(() => {
     if (!brand || !model) return [];
     return issuesByBrandModel[`${brand}||${model}`] || [];
@@ -140,6 +141,8 @@ export default function Quote() {
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data?.error || "Price not found");
 
+        // ✅ FIXED: pricing endpoint returns { rules: [...] } not { price: ... }
+        // So we must read the first rule and extract rule.price (cents)
         const rule = data.rules?.[0];
         if (!rule) throw new Error("No price found");
         if (!cancelled) setPriceCents(Number(rule.price));
