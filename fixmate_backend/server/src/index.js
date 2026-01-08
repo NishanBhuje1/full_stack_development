@@ -15,6 +15,7 @@ import { catalogRouter } from "./routes/catalog.routes.js";
 
 
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(
   helmet({
