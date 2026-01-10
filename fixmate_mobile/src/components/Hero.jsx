@@ -36,7 +36,7 @@ export default function Hero() {
       </div>
 
       {/* Let's Chat Button */}
-      <button className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg flex items-center gap-2 transition-colors z-40">
+      {/* <button className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-full shadow-lg flex items-center gap-2 transition-colors z-40">
         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
           <path
             fillRule="evenodd"
@@ -45,7 +45,7 @@ export default function Hero() {
           />
         </svg>
         Let's Chat!
-      </button>
+      </button> */}
     </section>
   );
 }

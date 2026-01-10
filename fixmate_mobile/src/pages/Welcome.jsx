@@ -1,50 +1,134 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { ShieldCheck, Zap, HeartHandshake, ArrowRight } from "lucide-react";
 
 export default function Welcome() {
-  return (
-    <div className="min-h-[70vh] bg-[#f1f9f8]">
-      <div className="max-w-4xl mx-auto px-4 py-14">
-        <div className="bg-white rounded-2xl shadow-sm p-8">
-          <h1 className="text-4xl md:text-5xl font-serif text-[#334578]">
-            Welcome to FixMate Mobile
-          </h1>
-          <p className="text-[#334578]/80 mt-4 text-lg leading-relaxed">
-            We’re here to make phone repair simple, stress-free, and reliable.
-            Whether it’s a cracked screen, battery issue, or charging problem—our team
-            will guide you clearly and treat your device with care.
-          </p>
+  // Animation variants for staggered entrance
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
+      },
+    },
+  };
 
-          <div className="grid md:grid-cols-3 gap-4 mt-8">
-            <div className="rounded-2xl border border-gray-200 p-5">
-              <div className="font-semibold text-[#334578]">Friendly Support</div>
-              <p className="text-[#334578]/75 mt-1">Clear advice and honest recommendations.</p>
-            </div>
-            <div className="rounded-2xl border border-gray-200 p-5">
-              <div className="font-semibold text-[#334578]">Reliable Repairs</div>
-              <p className="text-[#334578]/75 mt-1">Careful handling and quality workmanship.</p>
-            </div>
-            <div className="rounded-2xl border border-gray-200 p-5">
-              <div className="font-semibold text-[#334578]">Fast & Simple</div>
-              <p className="text-[#334578]/75 mt-1">Get a quote, then book in minutes.</p>
-            </div>
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 100 },
+    },
+  };
+
+  return (
+    <div className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-[#f1f9f8]">
+      {/* 1. Ambient Background Blobs */}
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-300/30 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-96 h-96 bg-purple-300/20 rounded-full blur-3xl" />
+
+      <div className="relative w-full max-w-5xl mx-auto px-4 py-12">
+        {/* 2. Glassmorphism Card */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          className="bg-white/70 backdrop-blur-xl border border-white/50 rounded-3xl shadow-2xl shadow-blue-900/5 p-8 md:p-12 overflow-hidden"
+        >
+          {/* Header Section */}
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <motion.div variants={itemVariants}>
+              <span className="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-xs font-bold tracking-wide uppercase mb-4">
+                FixMate Mobile
+              </span>
+            </motion.div>
+            
+            <motion.h1 
+              variants={itemVariants}
+              className="text-4xl md:text-6xl font-serif text-[#334578] tracking-tight mb-6"
+            >
+              Repair made <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">simple</span>.
+            </motion.h1>
+            
+            <motion.p 
+              variants={itemVariants}
+              className="text-[#334578]/70 text-lg md:text-xl leading-relaxed"
+            >
+              We’re here to make phone repair stress-free and reliable.
+              Whether it’s a cracked screen or a tired battery—our team treats your device with care.
+            </motion.p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 mt-8">
+          {/* Feature Grid */}
+          <motion.div 
+            variants={containerVariants}
+            className="grid md:grid-cols-3 gap-6 mb-12"
+          >
+            <FeatureCard 
+              icon={<HeartHandshake className="w-6 h-6 text-blue-600" />}
+              title="Friendly Support"
+              desc="Clear advice and honest recommendations without the jargon."
+            />
+            <FeatureCard 
+              icon={<ShieldCheck className="w-6 h-6 text-indigo-600" />}
+              title="Reliable Repairs"
+              desc="Careful handling and quality workmanship backed by warranty."
+            />
+            <FeatureCard 
+              icon={<Zap className="w-6 h-6 text-amber-500" />}
+              title="Fast & Simple"
+              desc="Get a quote online instantly, then book in minutes."
+            />
+          </motion.div>
+
+          {/* CTA Buttons */}
+          <motion.div 
+            variants={itemVariants}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          >
             <Link
               to="/quote"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-full text-center transition-colors"
+              className="group relative inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-white bg-[#334578] rounded-full overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-blue-900/30 hover:-translate-y-0.5"
             >
-              Get a Quote
+              <span className="relative z-10 flex items-center gap-2">
+                Get a Quote <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </span>
+              {/* Button Shine Effect */}
+              <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0" />
             </Link>
+
             <Link
               to="/contact"
-              className="border border-gray-200 hover:bg-gray-50 text-[#334578] font-semibold px-6 py-3 rounded-full text-center transition-colors"
+              className="inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-[#334578] bg-white border border-gray-200 rounded-full transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm"
             >
               Contact Us
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
+  );
+}
+
+// Sub-component for cleaner code
+function FeatureCard({ icon, title, desc }) {
+  return (
+    <motion.div 
+      variants={{
+        hidden: { opacity: 0, scale: 0.9 },
+        visible: { opacity: 1, scale: 1 }
+      }}
+      whileHover={{ y: -5 }}
+      className="group p-6 bg-white/50 rounded-2xl border border-white/60 hover:bg-white hover:shadow-xl hover:shadow-blue-900/5 transition-all duration-300"
+    >
+      <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+        {icon}
+      </div>
+      <h3 className="font-bold text-lg text-[#334578] mb-2">{title}</h3>
+      <p className="text-[#334578]/70 text-sm leading-relaxed">{desc}</p>
+    </motion.div>
   );
 }
