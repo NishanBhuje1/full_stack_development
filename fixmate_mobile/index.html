@@ -15,6 +15,25 @@
 
       gtag("config", "AW-17866911941");
     </script>
+    <!-- Event snippet for Submit lead form conversion page
+In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
+    <script>
+      function gtag_report_conversion(url) {
+        var callback = function () {
+          if (typeof url != "undefined") {
+            window.location = url;
+          }
+        };
+        gtag("event", "conversion", {
+          send_to: "AW-17866911941/hh9aCI-t2-AbEMXhzcdC",
+          value: 1.0,
+          currency: "AUD",
+          event_callback: callback,
+        });
+        return false;
+      }
+    </script>
+
     <meta charset="UTF-8" />
     <link
       rel="apple-touch-icon"
@@ -63,7 +82,10 @@
     <meta property="og:url" content="https://fixmatemobile.com" />
     <meta property="og:site_name" content="FixMate Mobile" />
     <meta property="og:locale" content="en_AU" />
-    <meta property="og:image" content="https://www.fixmatemobile.com/og-image.png" />
+    <meta
+      property="og:image"
+      content="https://www.fixmatemobile.com/og-image.png"
+    />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FixMate Mobile</title>
