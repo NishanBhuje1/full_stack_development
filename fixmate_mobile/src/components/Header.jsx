@@ -58,6 +58,7 @@ export default function Header() {
             <NavItem to="/" label="Home" />
             <NavItem to="/welcome" label="Welcome" />
             <NavItem to="/quote" label="Get Quote" />
+            <NavItem to="/visit-store" label="Visit Our Store" />
             <NavItem to="/contact" label="Contact" />
           </div>
 
@@ -86,6 +87,7 @@ export default function Header() {
                 <MobileNavItem to="/" label="Home" onClick={closeMobile} />
                 <MobileNavItem to="/welcome" label="Welcome" onClick={closeMobile} />
                 <MobileNavItem to="/quote" label="Get Quote" onClick={closeMobile} />
+                <MobileNavItem to="/visit-store" label="Visit Our Store" onClick={closeMobile} />
                 <MobileNavItem to="/contact" label="Contact" onClick={closeMobile} />
               </div>
             </motion.div>
