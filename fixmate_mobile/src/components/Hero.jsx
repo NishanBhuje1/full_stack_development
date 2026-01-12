@@ -13,7 +13,7 @@ export default function Hero() {
               Expert Care for Your Device
             </h1>
             <p className="text-xl md:text-2xl text-[#334578] mb-8">
-              Your Trusted Phone Repair Partner
+              Your Trusted Phone Partner
             </p>
 
             <button

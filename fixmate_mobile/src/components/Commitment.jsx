@@ -1,5 +1,12 @@
 import { motion } from "framer-motion";
-import { Star, ShieldCheck, Wrench, HeartHandshake, Quote } from "lucide-react";
+import {
+  Star,
+  ShieldCheck,
+  Wrench,
+  HeartHandshake,
+  Quote,
+  Store,
+} from "lucide-react";
 
 // --- Review Data (Static for now) ---
 const REVIEWS = [
@@ -10,19 +17,16 @@ const REVIEWS = [
   },
   {
     name: "Josephine Flecknoe",
-
     text: "Very helpful and trustworthy service from the salesperson, plus great product knowledge. Thanks Wayne.",
     stars: 5,
   },
   {
     name: "Neil Fereday",
-
     text: "Great service and plenty of choice. Highly recommended!",
     stars: 5,
   },
   {
     name: "Daya shankar Pathak",
-
     text: "Good Service and very professional.",
     stars: 5,
   },
@@ -42,32 +46,44 @@ export default function Commitment() {
             transition={{ duration: 0.6 }}
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold uppercase tracking-wider mb-6">
-              <ShieldCheck className="w-4 h-4" /> Why Choose Us
+              <Store className="w-4 h-4" /> In-Store Services
             </div>
+
             <h2 className="text-4xl md:text-5xl font-serif text-[#334578] mb-6 leading-tight">
-              Committed to <span className="text-blue-600">Excellence</span> in
-              Every Repair
+              Your local <span className="text-blue-600">retail store</span> for
+              phones, accessories, and in-store device services
             </h2>
-            <p className="text-lg text-gray-600 leading-relaxed mb-8">
-              At FixMate Mobile, we don't just fix screens; we restore
-              connections. We value clear communication, precise quotes, and
-              genuine care for your device. Our goal is to build trust through
-              transparency and quality workmanship.
+
+            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+              FixMate Mobile is a physical store. We sell mobile accessories and
+              provide optional, in-store device services such as screen and
+              battery replacements, hardware servicing, and
+              diagnostics—performed on-site at our location.
             </p>
+
+            {/* Policy clarity (key for Google Ads) */}
+            <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 mb-8">
+              <p className="text-sm text-[#334578] font-semibold">Important:</p>
+              <p className="text-sm text-[#334578]/80 leading-relaxed">
+                All services are performed <strong>in-store</strong> at our
+                physical location. We do not provide remote, online-only, or
+                third-party technical support.
+              </p>
+            </div>
 
             {/* Feature List */}
             <div className="space-y-4">
               <FeatureItem
                 icon={<Wrench />}
-                text="Expert technicians with years of experience"
+                text="On-site device servicing (screen, battery, ports, diagnostics)"
               />
               <FeatureItem
                 icon={<ShieldCheck />}
-                text="Premium quality parts & warranty"
+                text="Quality parts, clear pricing & workmanship warranty"
               />
               <FeatureItem
                 icon={<HeartHandshake />}
-                text="Honest advice, no hidden fees"
+                text="Friendly in-store help for choosing accessories and services"
               />
             </div>
           </motion.div>
@@ -82,8 +98,8 @@ export default function Commitment() {
           >
             <div className="absolute inset-0 bg-blue-600 rounded-3xl rotate-3 opacity-10"></div>
             <img
-              src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=2070&auto=format&fit=crop" // Changed to a cleaner Unsplash repair image
-              alt="Technician repairing phone"
+              src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=2070&auto=format&fit=crop"
+              alt="In-store technician servicing a phone"
               className="relative rounded-3xl shadow-2xl w-full object-cover h-[400px] md:h-[500px]"
             />
           </motion.div>
@@ -93,7 +109,7 @@ export default function Commitment() {
         <div>
           <div className="text-center mb-12">
             <h3 className="text-3xl font-serif text-[#334578] mb-4">
-              Loved by Locals
+              Trusted by local customers
             </h3>
             <div className="flex justify-center items-center gap-2 text-amber-500 mb-2">
               <Star className="w-6 h-6 fill-current" />
@@ -122,7 +138,6 @@ function FeatureItem({ icon, text }) {
   return (
     <div className="flex items-center gap-4">
       <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-        {/* Clone element to force size consistency */}
         <div className="w-5 h-5">{icon}</div>
       </div>
       <span className="text-[#334578] font-medium">{text}</span>
@@ -163,7 +178,7 @@ function ReviewCard({ review, index }) {
         </div>
         <div>
           <div className="text-sm font-bold text-[#334578]">{review.name}</div>
-          <div className="text-xs text-gray-400">{review.date}</div>
+          {/* review.date removed because it was undefined and could show blank */}
         </div>
       </div>
     </motion.div>
