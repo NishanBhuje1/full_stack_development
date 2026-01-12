@@ -214,8 +214,17 @@ export default function Quote() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || "Failed to submit booking");
 
-      // ✅ CHANGE: fire conversion ONLY after server confirms success
-      fireLeadConversion({ valueAud: 1.0 });
+      /* 🔧 GOOGLE ADS CONVERSION TRACKING */
+
+      if (window.gtag_report_conversion) {
+        window.gtag_report_conversion();
+      } else if (window.gtag) {
+        window.gtag("event", "conversion", {
+          send_to: "AW-17866911941/hh9aCI-t2-AbEMXhzcdC",
+          value: 1.0,
+          currency: "AUD",
+        });
+      }
 
       alert("Appointment request submitted! We will contact you shortly.");
       navigate("/");
