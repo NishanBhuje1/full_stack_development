@@ -216,11 +216,9 @@ export default function Quote() {
 
       /* 🔧 GOOGLE ADS CONVERSION TRACKING */
 
-      if (window.gtag_report_conversion) {
-        window.gtag_report_conversion();
-      } else if (window.gtag) {
+      if (window.gtag) {
         window.gtag("event", "conversion", {
-          send_to: "AW-17866911941/hh9aCI-t2-AbEMXhzcdC",
+          send_to: "AW-17866911941/k8DQCNnkouEbEMXhzcdC",
           value: 1.0,
           currency: "AUD",
         });
