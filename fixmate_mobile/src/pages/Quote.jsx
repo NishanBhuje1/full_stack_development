@@ -364,53 +364,73 @@ export default function Quote() {
           {step === 2 && (
             <div>
               <h2 className="text-2xl font-semibold text-[#334578] mb-4">
-                Step 2: Fixed price
+                Step 2: Estimated price
               </h2>
 
-              <div className="rounded-2xl border border-gray-200 p-5">
-                <div className="text-[#334578]/80 text-sm mb-2">
-                  Your selection
-                </div>
-                <div className="text-lg font-semibold text-[#334578]">
-                  {brand} • {model} • {issue}
+              {/* Big Price Card */}
+              <div className="rounded-3xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+                {/* Top section */}
+                <div className="p-6 md:p-8 text-center">
+                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wide">
+                    Estimated cost only
+                  </div>
+
+                  <div className="mt-4 text-lg md:text-xl font-semibold text-[#334578]">
+                    {brand} {model}
+                  </div>
+
+                  <div className="mt-1 text-[#334578]/80">{issue}</div>
+
+                  <div className="mt-6">
+                    {loadingPrice ? (
+                      <div className="text-[#334578]/80">Loading price...</div>
+                    ) : priceCents != null ? (
+                      <>
+                        <div className="text-[#334578]/70 text-sm">
+                          Estimated price
+                        </div>
+                        <div className="mt-2 text-5xl md:text-6xl font-extrabold text-[#0044ff] leading-none">
+                          ${centsToAud(priceCents)}
+                        </div>
+                        <div className="mt-3 text-sm text-[#334578]/70">
+                          Please call or visit our store to confirm final
+                          pricing.
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-red-600 font-semibold">
+                        {priceError
+                          ? `Price error: ${priceError}`
+                          : "No price found for this selection."}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="mt-4">
-                  {loadingPrice ? (
-                    <div className="text-[#334578]/80">Loading price...</div>
-                  ) : priceCents != null ? (
-                    <>
-                      <div className="text-[#334578]/80 text-sm">
-                        Fixed price
-                      </div>
-                      <div className="text-3xl font-bold text-[#334578] mt-1">
-                        ${centsToAud(priceCents)}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="text-red-600 font-semibold">
-                      {priceError
-                        ? `Price error: ${priceError}`
-                        : "No price found for this selection."}
-                    </div>
-                  )}
-                </div>
-              </div>
+                {/* Bottom action bar */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 border-t border-gray-200">
+                  <button
+                    onClick={back}
+                    className="px-6 py-4 font-semibold text-[#334578] hover:bg-gray-50 transition-colors"
+                  >
+                    Back
+                  </button>
 
-              <div className="flex items-center justify-between mt-6">
-                <button
-                  onClick={back}
-                  className="px-6 py-3 rounded-full border border-gray-200 font-semibold text-[#334578] hover:bg-gray-50"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={next}
-                  disabled={!canGoStep3}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold px-6 py-3 rounded-full"
-                >
-                  Book appointment
-                </button>
+                  <button
+                    onClick={next}
+                    disabled={!canGoStep3}
+                    className="px-6 py-4 font-semibold text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
+                  >
+                    Book appointment now
+                  </button>
+
+                  <Link
+                    to="/visit-store"
+                    className="px-6 py-4 font-semibold text-[#334578] bg-[#f1f9f8] hover:bg-[#e7f4f2] transition-colors text-center"
+                  >
+                    Visit our store
+                  </Link>
+                </div>
               </div>
             </div>
           )}
