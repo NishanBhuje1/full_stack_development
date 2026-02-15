@@ -376,7 +376,10 @@ export default function Quote() {
                   </div>
 
                   <div className="mt-4 text-lg md:text-xl font-semibold text-[#334578]">
-                    {brand} {model}
+                    {brand}
+                  </div>
+                  <div className="mt-4 text-lg md:text-xl font-semibold text-[#334578]">
+                    {model}
                   </div>
 
                   <div className="mt-1 text-[#334578]/80">{issue}</div>
