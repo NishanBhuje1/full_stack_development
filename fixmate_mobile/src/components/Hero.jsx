@@ -9,16 +9,15 @@ export default function Hero() {
         <div className="flex flex-col md:flex-row items-center gap-12">
           {/* Left Content */}
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-[#334578] leading-tight mb-6">
-              Phone Repair Shop in Ringwood – FixMate Mobile
-            </h1>
-            <p className="text-xl md:text-2xl text-[#334578] mb-4">
-              Your Trusted Local Phone Shop
+            <p className="inline-flex items-center gap-2 text-sm font-semibold text-[#334578]/60 tracking-wide uppercase mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block"></span>
+              Phone Repair Shop · Ringwood VIC
             </p>
-            <p className="text-base md:text-lg text-[#334578]/70 mb-8 max-w-lg">
-              We are a <strong>physical phone repair shop in Ringwood</strong>, Melbourne.
-              All repairs — screen replacements, battery fixes, and diagnostics — are performed
-              in-store at our Eastland location. Not an online-only service.
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-[#334578] leading-tight mb-6">
+              Expert Care for Your Device
+            </h1>
+            <p className="text-xl md:text-2xl text-[#334578] mb-8">
+              Your Trusted Phone Partner
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center md:justify-start">
