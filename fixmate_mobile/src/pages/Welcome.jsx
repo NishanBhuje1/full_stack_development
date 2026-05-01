@@ -141,6 +141,13 @@ export default function Welcome() {
             >
               Contact Us
             </Link>
+
+            <Link
+              to="/phone-repair-shop-ringwood"
+              className="inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-blue-600 bg-blue-50 border border-blue-100 rounded-full transition-all duration-200 hover:bg-blue-100 hover:shadow-sm"
+            >
+              Phone Repair Shop in Ringwood
+            </Link>
           </motion.div>
         </motion.div>
       </div>

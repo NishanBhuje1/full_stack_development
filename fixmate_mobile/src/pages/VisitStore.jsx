@@ -268,6 +268,18 @@ export default function VisitStore() {
           </motion.div>
         </motion.div>
 
+        {/* --- SEO Local Paragraph --- */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mt-6 text-center text-sm text-[#334578]/60 max-w-2xl mx-auto"
+        >
+          Visit our <strong className="text-[#334578]/80">phone shop in Ringwood</strong> for
+          in-store repairs on all major smartphone brands. FixMate Mobile is a physical repair
+          shop located inside Eastland Shopping Centre, Ringwood VIC — not an online-only service.
+        </motion.p>
+
         {/* --- Notices Section --- */}
         <motion.div 
           variants={containerVariants}

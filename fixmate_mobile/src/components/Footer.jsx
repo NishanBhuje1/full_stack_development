@@ -85,6 +85,14 @@ export default function Footer() {
                   Contact Support
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/phone-repair-shop-ringwood"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  Phone Repair Shop Ringwood
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -146,6 +154,15 @@ export default function Footer() {
               </button>
             </form>
           </div>
+        </div>
+
+        {/* Compliance Notice */}
+        <div className="mb-8 p-4 rounded-2xl bg-white/5 border border-white/10 text-center">
+          <p className="text-xs text-gray-500 leading-relaxed">
+            All repair services are performed at our <strong className="text-gray-400">physical store in Ringwood</strong>,
+            VIC. FixMate Mobile is not a third-party online-only technical support provider.
+            We are an independent local repair shop located at K129/175 Maroondah Highway, Ringwood VIC 3134.
+          </p>
         </div>
 
         {/* Divider */}

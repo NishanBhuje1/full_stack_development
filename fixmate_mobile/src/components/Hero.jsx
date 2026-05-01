@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -10,18 +10,31 @@ export default function Hero() {
           {/* Left Content */}
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif text-[#334578] leading-tight mb-6">
-              Expert Care for Your Device
+              Phone Repair Shop in Ringwood – FixMate Mobile
             </h1>
-            <p className="text-xl md:text-2xl text-[#334578] mb-8">
-              Your Trusted Phone Partner
+            <p className="text-xl md:text-2xl text-[#334578] mb-4">
+              Your Trusted Local Phone Shop
+            </p>
+            <p className="text-base md:text-lg text-[#334578]/70 mb-8 max-w-lg">
+              We are a <strong>physical phone repair shop in Ringwood</strong>, Melbourne.
+              All repairs — screen replacements, battery fixes, and diagnostics — are performed
+              in-store at our Eastland location. Not an online-only service.
             </p>
 
-            <button
-              onClick={() => navigate("/quote")}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-colors"
-            >
-              Get Quote NOW!
-            </button>
+            <div className="flex flex-wrap gap-4 justify-center md:justify-start">
+              <button
+                onClick={() => navigate("/quote")}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-full text-lg transition-colors"
+              >
+                Get Quote NOW!
+              </button>
+              <Link
+                to="/phone-repair-shop-ringwood"
+                className="inline-flex items-center text-[#334578] font-medium px-6 py-4 rounded-full text-base border border-[#334578]/20 hover:bg-[#334578]/5 transition-colors"
+              >
+                Phone Repair Shop in Ringwood →
+              </Link>
+            </div>
           </div>
 
           {/* Right Image */}
